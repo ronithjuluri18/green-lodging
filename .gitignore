@@ -1,0 +1,18 @@
+# macOS
+.DS_Store
+
+# Secrets / local config
+.env
+.env.*
+*.pem
+*.key
+.netlify/
+
+# Dependencies / build output
+node_modules/
+dist/
+build/
+
+
+# Local backup archives
+*.zip

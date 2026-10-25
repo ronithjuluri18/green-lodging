@@ -1,0 +1,3371 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1B5A45">
+<title>Green Lodging LLC</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231B5A45'/><path d='M8 22V13l8-5 8 5v9' stroke='white' stroke-width='2.2' fill='none' stroke-linejoin='round'/><rect x='13' y='16' width='6' height='6' fill='white'/></svg>">
+
+<script>
+/* ===========================================================================
+   *****  YOUR SETTINGS  --  THIS IS THE ONLY PART YOU EVER EDIT  *****
+   ===========================================================================
+   Replace the text between the quote marks. Keep the quote marks and commas.
+   Everything below this block is machinery. Do not touch it.
+   =========================================================================== */
+
+window.GL_CONFIG = {
+
+  // 1. Your Supabase Project URL   (looks like https://abcdefgh.supabase.co)
+  SUPABASE_URL: "PASTE_YOUR_PROJECT_URL_HERE",
+
+  // 2. Your publishable / anon key (starts with sb_publishable_  or  eyJ )
+  //    NEVER paste the "secret" or "service_role" key here.
+  SUPABASE_ANON_KEY: "PASTE_YOUR_ANON_KEY_HERE",
+
+  // 3. Your details, shown to tenants
+  COMPANY_NAME:    "Green Lodging LLC",
+  EMERGENCY_PHONE: "",
+  OFFICE_EMAIL:    "",
+
+  // 4. Leave false until you pay for Twilio text messaging
+  ENABLE_SMS_LOGIN: false,
+  PHONE_COUNTRY_CODE: "+1"
+};
+
+/* =====================  END OF THE PART YOU EDIT  ====================== */
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* ===========================================================================
+   Green Lodging LLC — visual system
+   Brand: deep pine green. Attention states carry colour (amber / red);
+   everything that is fine stays quiet. That way colour always means "look".
+   =========================================================================== */
+
+:root{
+  --ground:#F3F6F4; --surface:#FFFFFF; --surface-2:#F8FAF9;
+  --ink:#131A18; --ink-2:#48534F; --ink-3:#77837E;
+  --line:#DBE3DF; --line-2:#EAEFEC;
+  --brand:#1B5A45; --brand-2:#12412F; --brand-soft:#E2EDE8; --on-brand:#FFFFFF;
+  --warn:#96660F; --warn-soft:#F9EEDA;
+  --crit:#A8383A; --crit-soft:#F9E7E7;
+  --calm:#3B6A8C; --calm-soft:#E6EEF5;
+  --shadow:0 1px 2px rgba(19,26,24,.06), 0 6px 16px rgba(19,26,24,.05);
+  --r:9px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0C110F; --surface:#141B19; --surface-2:#19221F;
+    --ink:#E6EDEA; --ink-2:#A4B1AC; --ink-3:#76837E;
+    --line:#26322E; --line-2:#1D2724;
+    --brand:#6FBFA1; --brand-2:#8FD3B9; --brand-soft:#16302662; --on-brand:#0C110F;
+    --warn:#D9A855; --warn-soft:#2C2414;
+    --crit:#E28A8B; --crit-soft:#2F1A1B;
+    --calm:#8DB6D6; --calm-soft:#17252F;
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 6px 16px rgba(0,0,0,.28);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0C110F; --surface:#141B19; --surface-2:#19221F;
+  --ink:#E6EDEA; --ink-2:#A4B1AC; --ink-3:#76837E;
+  --line:#26322E; --line-2:#1D2724;
+  --brand:#6FBFA1; --brand-2:#8FD3B9; --brand-soft:#163026; --on-brand:#0C110F;
+  --warn:#D9A855; --warn-soft:#2C2414;
+  --crit:#E28A8B; --crit-soft:#2F1A1B;
+  --calm:#8DB6D6; --calm-soft:#17252F;
+  --shadow:0 1px 2px rgba(0,0,0,.35), 0 6px 16px rgba(0,0,0,.28);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,.ff{font-family:"Libre Franklin",system-ui,sans-serif}
+h1,h2,h3{margin:0; text-wrap:balance; letter-spacing:-.01em}
+button,input,select,textarea{font:inherit; color:inherit}
+a{color:var(--brand)}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums}
+.hide{display:none !important}
+:focus-visible{outline:2px solid var(--brand); outline-offset:2px}
+
+/* ---------- boot ---------- */
+.bootscreen{min-height:70vh; display:grid; place-content:center; text-align:center; gap:6px}
+.bootmark{font-family:"Libre Franklin"; font-weight:800; font-size:19px; letter-spacing:-.02em; color:var(--brand)}
+.bootnote{font-size:13px; color:var(--ink-3)}
+
+/* ===================== SIGN-IN ===================== */
+.authpage{min-height:100vh; display:grid; grid-template-columns:1fr; align-content:start}
+.authbar{background:var(--brand); color:var(--on-brand); padding:26px 22px}
+.authbar .co{font-family:"Libre Franklin"; font-weight:800; font-size:21px; letter-spacing:-.02em; display:flex; align-items:center; gap:10px}
+.authbar .co svg{flex:none}
+.authbar .tag{font-size:13px; opacity:.85; margin-top:4px}
+.authwrap{width:100%; max-width:440px; margin:0 auto; padding:26px 18px 70px}
+.authcard{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); overflow:hidden}
+.authcard .pad{padding:20px}
+.authtabs{display:flex; border-bottom:1px solid var(--line)}
+.authtab{flex:1; border:0; background:var(--surface-2); padding:13px 8px; cursor:pointer;
+  font-family:"Libre Franklin"; font-weight:600; font-size:14px; color:var(--ink-3); border-bottom:2px solid transparent}
+.authtab[aria-selected="true"]{background:var(--surface); color:var(--brand); border-bottom-color:var(--brand)}
+.authnote{font-size:13px; color:var(--ink-2); margin:0 0 16px; line-height:1.5}
+.authswitch{text-align:center; margin-top:16px; font-size:13.5px; color:var(--ink-2)}
+.authalt{margin-top:18px; padding-top:16px; border-top:1px solid var(--line-2);
+  text-align:center; font-size:13.5px; color:var(--ink-2)}
+
+/* --- one card, two doors --- */
+.authpage.solo{min-height:100vh; display:grid; place-items:center; background:var(--ground)}
+.authpage.solo .authwrap{padding-block:34px}
+.authtop{padding:26px 24px 4px; text-align:center}
+.authmark{width:44px; height:44px; border-radius:12px; background:var(--brand); color:var(--on-brand);
+  display:grid; place-items:center; margin:0 auto 14px}
+.authco{font-family:"Libre Franklin",sans-serif; font-weight:800; font-size:20px;
+  letter-spacing:-.025em; margin:0}
+.authsub{font-size:13px; color:var(--ink-3); margin-top:5px}
+.audtabs{display:flex; gap:3px; background:var(--surface-2); border:1px solid var(--line);
+  border-radius:10px; padding:3px; margin:20px 24px 0}
+.audtabs button{flex:1; border:0; background:none; font:inherit; font-family:"Libre Franklin",sans-serif;
+  font-weight:600; font-size:13.5px; color:var(--ink-2); padding:9px 8px; border-radius:8px;
+  cursor:pointer; white-space:nowrap}
+.audtabs button:hover{color:var(--ink)}
+.audtabs button[aria-selected="true"]{background:var(--surface); color:var(--brand); font-weight:700;
+  box-shadow:0 1px 3px rgba(19,26,24,.12)}
+.authfoot{text-align:center; font-size:12px; color:var(--ink-3); margin:14px auto 0; max-width:340px}
+.linkbtn{background:none; border:0; padding:2px; color:var(--brand); font:inherit; font-weight:600;
+  cursor:pointer; text-decoration:underline; text-underline-offset:3px; border-radius:4px}
+.linkbtn:hover{color:var(--brand-2)}
+.rowend{display:flex; justify-content:flex-end; margin-top:-4px}
+
+/* password box with a reveal button */
+.pwwrap{position:relative; display:block}
+.pwwrap input{padding-right:48px}
+.pweye{position:absolute; right:5px; top:50%; transform:translateY(-50%); border:0; background:none;
+  padding:8px; cursor:pointer; color:var(--ink-3); border-radius:7px; line-height:0;
+  display:grid; place-items:center}
+.pweye:hover{color:var(--ink); background:var(--line-2)}
+.pweye[aria-pressed="true"]{color:var(--brand)}
+.capslock{font-size:12px; color:var(--warn); margin-top:5px; font-weight:600;
+  font-family:"Libre Franklin",sans-serif}
+.meter{height:5px; border-radius:99px; background:var(--line-2); overflow:hidden}
+.meter i{display:block; height:100%; width:0; border-radius:99px;
+  transition:width .18s ease, background .18s ease}
+.errbox b{display:block; margin-bottom:3px}
+.errbox .btn.sm.pri{background:var(--crit); border-color:var(--crit); color:#fff}
+
+/* ===================== SHELL ===================== */
+.app{display:flex; min-height:100vh; align-items:stretch}
+.rail{width:236px; flex:0 0 236px; background:var(--surface); border-right:1px solid var(--line);
+  display:flex; flex-direction:column; position:sticky; top:0; height:100vh}
+.brand{padding:18px 16px 14px; border-bottom:1px solid var(--line-2)}
+.brand .mark{font-family:"Libre Franklin"; font-weight:800; font-size:15px; letter-spacing:-.02em;
+  display:flex; align-items:center; gap:8px; color:var(--brand)}
+.brand .sub{font-size:11px; color:var(--ink-3); margin-top:3px; letter-spacing:.05em;
+  text-transform:uppercase; font-family:"Libre Franklin"; font-weight:600}
+.navlist{padding:9px; display:flex; flex-direction:column; gap:1px; overflow-y:auto; flex:1}
+.navbtn{display:flex; align-items:center; gap:9px; width:100%; text-align:left; padding:9px 11px;
+  border:0; background:transparent; border-radius:7px; cursor:pointer;
+  font-family:"Libre Franklin"; font-weight:600; font-size:13.5px; color:var(--ink-2)}
+.navbtn:hover{background:var(--surface-2); color:var(--ink)}
+.navbtn[aria-current="true"]{background:var(--brand-soft); color:var(--brand)}
+.navbtn .cnt{margin-left:auto; font-size:11px; font-family:"IBM Plex Mono"; background:var(--crit);
+  color:#fff; border-radius:20px; padding:1px 7px; font-weight:500}
+.railfoot{padding:11px 14px; border-top:1px solid var(--line-2); font-size:11.5px; color:var(--ink-3)}
+.railfoot .who{color:var(--ink-2); font-weight:600; font-family:"Libre Franklin"; font-size:12.5px;
+  display:block; margin-bottom:2px; overflow-wrap:anywhere}
+
+.main{flex:1; min-width:0; display:flex; flex-direction:column}
+.topbar{display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:16px 24px 13px;
+  border-bottom:1px solid var(--line); background:var(--surface); position:sticky; top:0; z-index:20}
+.topbar h1{font-size:20px; font-weight:700}
+.topbar .crumb{font-size:11px; color:var(--ink-3); font-family:"Libre Franklin"; font-weight:700;
+  text-transform:uppercase; letter-spacing:.07em; display:block; margin-bottom:2px}
+.topbar .spacer{flex:1}
+.wrap{padding:20px 24px 70px; max-width:1200px; width:100%}
+
+/* ---------- buttons ---------- */
+.btn{border:1px solid var(--line); background:var(--surface); color:var(--ink); padding:8px 13px;
+  border-radius:7px; cursor:pointer; font-family:"Libre Franklin"; font-weight:600; font-size:13.5px;
+  display:inline-flex; align-items:center; justify-content:center; gap:7px; white-space:nowrap}
+.btn:hover{border-color:var(--ink-3)}
+.btn:disabled{opacity:.55; cursor:default}
+.btn.pri{background:var(--brand); border-color:var(--brand); color:var(--on-brand)}
+.btn.pri:hover{background:var(--brand-2); border-color:var(--brand-2)}
+.btn.sm{padding:5px 10px; font-size:12.5px}
+.btn.big{padding:12px 16px; font-size:15px; width:100%}
+.btn.danger{color:var(--crit); border-color:var(--crit-soft)}
+
+/* ---------- panels ---------- */
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+.panel-h{display:flex; align-items:center; gap:10px; padding:13px 16px; border-bottom:1px solid var(--line-2); flex-wrap:wrap}
+.panel-h h2{font-size:14.5px; font-weight:700}
+.panel-h .spacer{flex:1}
+.eyebrow{font-family:"Libre Franklin"; font-weight:700; font-size:10.5px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--ink-3)}
+.stack{display:flex; flex-direction:column; gap:16px}
+
+/* ---------- KPI ---------- */
+.kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:12px}
+.kpi{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:13px 15px}
+.kpi .v{font-family:"Libre Franklin"; font-weight:800; font-size:24px; letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums; line-height:1.15}
+.kpi .l{font-size:11px; color:var(--ink-3); font-family:"Libre Franklin"; font-weight:600;
+  text-transform:uppercase; letter-spacing:.05em; margin-top:3px}
+.kpi .n{font-size:12px; color:var(--ink-2); margin-top:6px}
+.kpi.crit .v{color:var(--crit)} .kpi.warn .v{color:var(--warn)} .kpi.brand .v{color:var(--brand)}
+
+/* ---------- alerts ---------- */
+.alerts{display:flex; flex-direction:column}
+.alert{display:flex; gap:12px; align-items:flex-start; padding:12px 16px 12px 13px;
+  border-top:1px solid var(--line-2); border-left:3px solid transparent}
+.alert:first-child{border-top:0}
+.alert.crit{border-left-color:var(--crit)}
+.alert.warn{border-left-color:var(--warn)}
+.alert.info{border-left-color:var(--calm)}
+.alert .body{flex:1; min-width:0}
+.alert .t{font-family:"Libre Franklin"; font-weight:600; font-size:14px}
+.alert .d{font-size:12.5px; color:var(--ink-2); margin-top:2px}
+.alert .when{font-size:11.5px; font-family:"IBM Plex Mono"; color:var(--ink-3); white-space:nowrap; padding-top:3px}
+.empty{padding:34px 20px; text-align:center; color:var(--ink-3); font-size:13.5px}
+.empty strong{display:block; color:var(--ink-2); font-family:"Libre Franklin"; font-size:15px; margin-bottom:5px}
+
+/* ---------- pills ---------- */
+.pill{display:inline-flex; align-items:center; gap:5px; font-family:"Libre Franklin"; font-weight:600;
+  font-size:11px; letter-spacing:.03em; padding:2px 8px; border-radius:20px; text-transform:uppercase; white-space:nowrap}
+.pill.warn{background:var(--warn-soft); color:var(--warn)}
+.pill.crit{background:var(--crit-soft); color:var(--crit)}
+.pill.info{background:var(--calm-soft); color:var(--calm)}
+.pill.brand{background:var(--brand-soft); color:var(--brand)}
+.pill.mute{background:var(--line-2); color:var(--ink-3)}
+.pill.settled{background:transparent; color:var(--ink-3); border:1px solid var(--line)}
+
+/* ---------- tables ---------- */
+.tblwrap{overflow-x:auto; -webkit-overflow-scrolling:touch}
+table.t{width:100%; border-collapse:collapse; font-size:13.5px}
+table.t th{text-align:left; font-family:"Libre Franklin"; font-weight:700; font-size:10.5px;
+  letter-spacing:.07em; text-transform:uppercase; color:var(--ink-3); padding:9px 14px;
+  border-bottom:1px solid var(--line); white-space:nowrap; background:var(--surface-2)}
+table.t td{padding:10px 14px; border-bottom:1px solid var(--line-2); vertical-align:middle}
+table.t tr:last-child td{border-bottom:0}
+table.t tbody tr:hover{background:var(--surface-2)}
+td.r,th.r{text-align:right}
+.sub{font-size:12px; color:var(--ink-3)}
+/* grouped money columns: government beside tenant */
+table.t th.grp{text-align:center; border-bottom:1px solid var(--line);
+  background:var(--brand-soft); color:var(--brand)}
+table.t th.sml{font-size:9.5px; letter-spacing:.06em; padding-top:6px; padding-bottom:7px}
+table.t td.gl{color:var(--ink-3)}
+table.t .owe{color:var(--crit); font-weight:600}
+table.t td.grouprow{background:var(--surface-2); padding-top:11px; padding-bottom:8px}
+table.t tr.subtotal td{border-top:1px solid var(--line); font-weight:700;
+  font-family:"Libre Franklin",sans-serif; font-size:12.5px; background:var(--surface-2)}
+
+/* ---------- forms / modal ---------- */
+.fld{display:flex; flex-direction:column; gap:5px}
+.fld > label{font-family:"Libre Franklin"; font-weight:600; font-size:12px; letter-spacing:.03em;
+  text-transform:uppercase; color:var(--ink-2)}
+.fld .help{font-size:12px; color:var(--ink-3)}
+.fld input,.fld select,.fld textarea{width:100%; padding:10px 11px; border:1px solid var(--line);
+  border-radius:7px; background:var(--surface-2); font-size:16px}
+.fld textarea{min-height:80px; resize:vertical; font-family:inherit}
+.fld input[type=file]{padding:8px; font-size:13px; background:transparent}
+.fld.check{flex-direction:row; align-items:center; gap:9px}
+.fld.check input{width:auto}
+.fld.check label{text-transform:none; letter-spacing:0; font-size:14px; color:var(--ink)}
+.row2{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+.formstack{display:flex; flex-direction:column; gap:14px}
+.note{background:var(--brand-soft); color:var(--brand-2); border-radius:7px; padding:10px 12px; font-size:12.5px; line-height:1.45}
+.errbox{background:var(--crit-soft); color:var(--crit); border-radius:7px; padding:10px 12px; font-size:13px; line-height:1.45}
+.okbox{background:var(--brand-soft); color:var(--brand-2); border-radius:7px; padding:10px 12px; font-size:13px}
+
+.scrim{position:fixed; inset:0; background:rgba(10,16,14,.55); display:flex; align-items:flex-start;
+  justify-content:center; padding:20px 14px; overflow-y:auto; z-index:80; backdrop-filter:blur(2px)}
+.modal{background:var(--surface); border-radius:11px; width:100%; max-width:560px;
+  box-shadow:0 20px 50px rgba(0,0,0,.32); border:1px solid var(--line); margin:auto 0}
+.modal .mh{display:flex; align-items:center; gap:10px; padding:16px 20px; border-bottom:1px solid var(--line-2)}
+.modal .mh h3{font-size:16px; font-weight:700; flex:1}
+.modal .mb{padding:18px 20px; display:flex; flex-direction:column; gap:14px}
+.modal .mf{padding:14px 20px; border-top:1px solid var(--line-2); display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap}
+
+.toast{position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:var(--ink);
+  color:var(--ground); padding:11px 18px; border-radius:8px; font-size:13.5px;
+  font-family:"Libre Franklin"; font-weight:600; z-index:200; box-shadow:0 8px 24px rgba(0,0,0,.28);
+  max-width:min(92vw,420px); text-align:center}
+.toast.bad{background:var(--crit); color:#fff}
+
+.tabs{display:flex; gap:3px; border-bottom:1px solid var(--line); margin-bottom:16px; overflow-x:auto}
+.tab{border:0; background:none; padding:9px 13px; cursor:pointer; font-family:"Libre Franklin";
+  font-weight:600; font-size:13.5px; color:var(--ink-3); border-bottom:2px solid transparent; white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--brand); border-bottom-color:var(--brand)}
+
+.filters{display:flex; gap:9px; flex-wrap:wrap; align-items:center; margin-bottom:14px}
+.filters select,.filters input{padding:8px 10px; border:1px solid var(--line); border-radius:7px;
+  background:var(--surface); font-size:14px}
+
+.doclink{display:inline-flex; align-items:center; gap:5px; font-size:12.5px; color:var(--brand);
+  text-decoration:none; background:none; border:0; padding:0; cursor:pointer; font-family:inherit}
+.doclink:hover{text-decoration:underline}
+
+.chk{display:flex; gap:11px; align-items:flex-start; padding:11px 16px; border-top:1px solid var(--line-2)}
+.chk:first-child{border-top:0}
+.chk .mk{width:19px;height:19px;border-radius:50%;border:1.5px solid var(--line); flex:none;
+  margin-top:1px; display:grid; place-items:center; font-size:11px; color:var(--on-brand); font-weight:700}
+.chk.done .mk{background:var(--brand); border-color:var(--brand)}
+.chk.done .tx b{color:var(--ink-3); text-decoration:line-through}
+.chk .tx{flex:1; font-size:13.5px}
+.chk .tx b{font-family:"Libre Franklin"; display:block; font-size:13.5px}
+.chk .tx span{font-size:12.5px; color:var(--ink-3)}
+
+.loading{padding:56px 20px; text-align:center; color:var(--ink-3); font-family:"Libre Franklin"; font-weight:600}
+
+/* ===================== TENANT PORTAL ===================== */
+.tp{max-width:720px; margin:0 auto; padding:0 16px 80px}
+.tphero{background:var(--brand); color:var(--on-brand); padding:22px 22px 24px; border-radius:0 0 16px 16px; margin-bottom:18px}
+.tphero .co{font-family:"Libre Franklin"; font-weight:700; font-size:12px; letter-spacing:.09em;
+  text-transform:uppercase; opacity:.8}
+.tphero h1{font-size:24px; font-weight:800; margin-top:4px}
+.tphero .addr{font-size:13.5px; opacity:.88; margin-top:3px}
+.tpbal{margin-top:16px; background:rgba(255,255,255,.13); border-radius:10px; padding:13px 15px;
+  display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+.tpbal .amt{font-family:"Libre Franklin"; font-weight:800; font-size:27px; font-variant-numeric:tabular-nums}
+.tpbal .lbl{font-size:12.5px; opacity:.88}
+.tpnav{display:flex; gap:6px; overflow-x:auto; padding:0 16px 14px; max-width:720px; margin:0 auto;
+  -webkit-overflow-scrolling:touch; scrollbar-width:none}
+.tpnav::-webkit-scrollbar{display:none}
+.tpnav button{border:1px solid var(--line); background:var(--surface); padding:8px 14px; border-radius:20px;
+  font-family:"Libre Franklin"; font-weight:600; font-size:13.5px; color:var(--ink-2); cursor:pointer; white-space:nowrap}
+.tpnav button[aria-current="true"]{background:var(--brand); border-color:var(--brand); color:var(--on-brand)}
+.tprow{display:flex; gap:12px; align-items:center; padding:13px 16px; border-top:1px solid var(--line-2)}
+.tprow:first-child{border-top:0}
+.tprow .g{flex:1; min-width:0}
+.tprow .t{font-family:"Libre Franklin"; font-weight:600; font-size:14.5px}
+.tprow .d{font-size:12.5px; color:var(--ink-3); margin-top:2px}
+.tprow .amt{font-family:"IBM Plex Mono"; font-variant-numeric:tabular-nums; font-size:14.5px; white-space:nowrap}
+.tpcta{margin-top:18px}
+.tpnav{position:relative}
+.tpnav::after{content:''; position:absolute; right:16px; top:0; bottom:14px; width:26px;
+  pointer-events:none; background:linear-gradient(to right, transparent, var(--ground))}
+
+@media (max-width:860px){
+  .app{flex-direction:column}
+  .rail{width:auto; flex:none; height:auto; position:static; border-right:0;
+    border-bottom:1px solid var(--line); flex-direction:column}
+  .brand{padding:13px 16px 9px; border-bottom:0}
+  .navlist{flex-direction:row; overflow-x:auto; padding:0 10px 10px; gap:3px}
+  .navbtn{white-space:nowrap; padding:7px 12px}
+  .railfoot{display:flex; gap:10px; align-items:center; justify-content:space-between}
+  .railfoot .who{margin:0}
+  .topbar{padding:13px 16px 11px}
+  .wrap{padding:16px 16px 64px}
+  .row2{grid-template-columns:1fr}
+  .kpi .v{font-size:21px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+@media print{.rail,.topbar,.tpnav,.btn{display:none!important} .wrap{padding:0}}
+
+/* ---------- "office access not switched on yet" screen ---------- */
+.codebox{margin:14px 0 4px; padding:10px 12px; border:1px solid var(--line);
+  border-radius:var(--r); background:var(--surface-2)}
+.codelab{font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); margin-bottom:3px}
+.codeval{font-size:14px; font-weight:500; color:var(--ink); word-break:break-all}
+.howto{margin:16px 0 10px; padding-left:20px; font-size:13.5px; color:var(--ink-2); line-height:1.6}
+.howto li{margin-bottom:5px}
+.sqlbox{margin:0 0 12px; padding:11px 12px; border:1px solid var(--line);
+  border-radius:var(--r); background:var(--surface-2); font-size:12.5px; color:var(--ink);
+  white-space:pre-wrap; word-break:break-all; line-height:1.5}
+
+/* ---------- click-to-edit table cells ---------- */
+.icell{min-height:26px; padding:3px 6px; margin:-3px -6px; border-radius:6px;
+  cursor:text; border:1px solid transparent; white-space:pre-wrap}
+.icell:hover{background:var(--surface-2); border-color:var(--line)}
+.icell:focus-visible{outline:2px solid var(--brand); outline-offset:1px}
+.icell.auto{color:var(--ink-3)}
+.icell.blank{color:var(--ink-3)}
+.iedit{width:100%; min-width:92px; padding:5px 7px; border:1px solid var(--brand);
+  border-radius:6px; background:var(--surface); color:var(--ink); font-size:13.5px}
+.iedit.mono{font-family:"IBM Plex Mono",ui-monospace,monospace; text-align:right}
+.iedit.ta{min-width:190px; resize:vertical; line-height:1.45}
+td.nowrap,.nowrap{white-space:nowrap}
+</style>
+</head>
+<body>
+
+<div id="root">
+  <div class="bootscreen"><div class="bootmark">Green Lodging LLC</div><div class="bootnote">Opening&hellip;</div></div>
+</div>
+<div id="modalRoot"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"></script>
+<script>
+/* ===========================================================================
+   GREEN LODGING LLC — property management portal
+   Runs entirely in the browser. All data lives in Supabase, and what each
+   person can see is enforced by the database, not by this file.
+   =========================================================================== */
+(function () {
+"use strict";
+
+/* ------------------------------------------------------------------ utils */
+const $  = (s, r) => (r || document).querySelector(s);
+const el = (t, a, k) => {
+  const n = document.createElement(t);
+  if (a) for (const p in a) {
+    if (a[p] == null) continue;
+    if (p === 'html') n.innerHTML = a[p];
+    else if (p === 'text') n.textContent = a[p];
+    else if (p.slice(0,2) === 'on') n.addEventListener(p.slice(2), a[p]);
+    else n.setAttribute(p, a[p]);
+  }
+  if (k) (Array.isArray(k) ? k : [k]).forEach(c => c && n.appendChild(typeof c === 'string' ? document.createTextNode(c) : c));
+  return n;
+};
+const uid4 = () => (crypto.randomUUID ? crypto.randomUUID()
+  : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = Math.random()*16|0; return (c==='x'?r:(r&0x3|0x8)).toString(16); }));
+
+const TODAY = new Date();
+const isoOf = d => { const z = new Date(d); return new Date(z.getTime() - z.getTimezoneOffset()*6e4).toISOString().slice(0,10); };
+const TODAY_ISO  = isoOf(TODAY);
+const CUR_PERIOD = TODAY_ISO.slice(0,7);
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONL= ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+const days = (a,b) => { if(!a) return 0; return Math.round((new Date(a+'T00:00:00') - new Date((b||TODAY_ISO)+'T00:00:00'))/864e5); };
+const fmtDate  = s => { if(!s) return '—'; const p=String(s).slice(0,10).split('-'); return MON[+p[1]-1]+' '+(+p[2])+', '+p[0]; };
+const fmtShort = s => { if(!s) return '—'; const p=String(s).slice(0,10).split('-'); return MON[+p[1]-1]+' '+(+p[2]); };
+const fmtPeriod= p => { if(!p) return '—'; const x=p.split('-'); return MONL[+x[1]-1]+' '+x[0]; };
+const money  = n => (n==null||n==='') ? '—' : '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const money0 = n => '$'+Math.round(Number(n)||0).toLocaleString('en-US');
+const addMonths = (p,k) => { let [y,m]=p.split('-').map(Number); m+=k; y+=Math.floor((m-1)/12); m=((m-1)%12+12)%12+1; return y+'-'+String(m).padStart(2,'0'); };
+const periodDue = (p,d) => p+'-'+String(Math.min(Math.max(+d||1,1),28)).padStart(2,'0');
+const ord = d => { d=Number(d)||1; return d+(d%10===1&&d!==11?'st':d%10===2&&d!==12?'nd':d%10===3&&d!==13?'rd':'th'); };
+const cleanName = s => String(s||'file').replace(/[^A-Za-z0-9._-]+/g,'_').slice(-80);
+
+function toast(msg, bad) {
+  const t = el('div', {class:'toast'+(bad?' bad':''), text:msg});
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), bad ? 5200 : 3200);
+}
+
+/* NYC rent-stabilized: the renewal offer must be served 90–150 days before
+   the lease ends (DHCR form RTP-8). These two numbers drive the reminders. */
+const RENEW_OPEN = 150, RENEW_CLOSE = 90;
+
+/* Settings come from the block at the top of this file. If they are still
+   blank, anything saved through the on-screen setup form takes over, so the
+   site can be set up in a browser without ever opening a text editor. */
+const BAKED = window.GL_CONFIG || {};
+const isPlaceholder = v => !v || String(v).indexOf('PASTE') === 0;
+function savedConfig() {
+  try { return JSON.parse(localStorage.getItem('gl_setup') || '{}'); } catch (e) { return {}; }
+}
+const CFG = (function () {
+  const s = savedConfig(), out = Object.assign({}, BAKED);
+  if (isPlaceholder(out.SUPABASE_URL) && s.SUPABASE_URL) out.SUPABASE_URL = s.SUPABASE_URL;
+  if (isPlaceholder(out.SUPABASE_ANON_KEY) && s.SUPABASE_ANON_KEY) out.SUPABASE_ANON_KEY = s.SUPABASE_ANON_KEY;
+  ['COMPANY_NAME','EMERGENCY_PHONE','OFFICE_EMAIL'].forEach(k => { if (s[k]) out[k] = s[k]; });
+  return out;
+})();
+const CO  = CFG.COMPANY_NAME || 'Green Lodging LLC';
+
+/* ------------------------------------------------------------ app state */
+const S = {
+  route:'today', session:null, me:null, sb:null, tab:{}, filter:{},
+  period:CUR_PERIOD, loading:true,
+  buildings:[], units:[], tenancies:[], leases:[], rent:[],
+  utilAccounts:[], utilBills:[], complaints:[], cupdates:[],
+  documents:[], profiles:[], invites:[], expenses:[], charges:[]
+};
+const isStaff  = () => S.me && (S.me.role === 'owner' || S.me.role === 'manager');
+const isOwner  = () => S.me && S.me.role === 'owner';
+
+const byId    = (c,id) => S[c].find(x => x.id === id);
+const bName   = id => { const b = byId('buildings', id); return b ? b.name : '—'; };
+const uLabel  = id => { const u = byId('units', id); return u ? u.label : '—'; };
+const uFull   = id => { const u = byId('units', id); return u ? (u.label + ' · ' + bName(u.building_id)) : '—'; };
+const unitsOf = bid => S.units.filter(u => u.building_id === bid).sort(cmpUnit);
+const cmpUnit = (a,b) => String(a.label||'').localeCompare(String(b.label||''), undefined, {numeric:true});
+/* The lease in force TODAY. A store lease with six agreed yearly steps has six
+   rows; picking the newest would quote the 2031 rent, so the range that
+   actually contains today wins, then the next one due to start, then the last
+   one that ended. */
+const activeLease = unitId => {
+  const ls = S.leases.filter(l => l.unit_id === unitId);
+  const covering = ls.filter(l => (!l.start_date || l.start_date <= TODAY_ISO)
+                               && (!l.end_date   || l.end_date   >= TODAY_ISO))
+                     .sort((a,b)=>String(b.start_date).localeCompare(String(a.start_date)))[0];
+  if (covering) return covering;
+  const upcoming = ls.filter(l => l.start_date && l.start_date > TODAY_ISO)
+                     .sort((a,b)=>String(a.start_date).localeCompare(String(b.start_date)))[0];
+  if (upcoming) return upcoming;
+  return ls.sort((a,b)=>String(b.end_date).localeCompare(String(a.end_date)))[0];
+};
+const leaseFor  = (unitId, period) => S.leases.filter(l => l.unit_id===unitId
+  && (!l.start_date || l.start_date.slice(0,7) <= period)
+  && (!l.end_date   || l.end_date.slice(0,7)   >= period))
+  .sort((a,b)=>String(b.start_date).localeCompare(String(a.start_date)))[0];
+const rentFor = (unitId, period) => S.rent.find(r => r.unit_id===unitId && r.period===period);
+
+/* ---------------------------------------------------------------------------
+   SUBSIDISED RENT
+   Most of these apartments are paid twice each month: the agency sends its
+   share straight to the landlord, the tenant sends the rest. They are chased
+   separately, so they are counted separately.
+   SCRIE and DRIE are the exception — they freeze the rent and pay through a
+   property tax credit, so no money ever arrives and nothing must look overdue.
+   --------------------------------------------------------------------------- */
+const SUBSIDY_PROGRAMS = [
+  {v:'Section 8',  l:'Section 8 (Housing Choice Voucher)'},
+  {v:'CityFHEPS',  l:'CityFHEPS'},
+  {v:'FHEPS',      l:'FHEPS'},
+  {v:'HASA',       l:'HASA'},
+  {v:'SOTA',       l:'SOTA'},
+  {v:'HRA',        l:'HRA — other'},
+  {v:'SCRIE',      l:'SCRIE (rent freeze — no payment)'},
+  {v:'DRIE',       l:'DRIE (rent freeze — no payment)'},
+  {v:'Other',      l:'Other programme'}
+];
+/* Programmes that actually send money. A frozen rent is not a debt. */
+const NO_CASH = ['SCRIE','DRIE'];
+const paysCash = p => !!p && NO_CASH.indexOf(p) < 0;
+
+/* What is owed this month, and by whom. One place, so the table, the alerts,
+   the tenant portal and the export can never disagree. */
+function split(unitId, period) {
+  const u = byId('units', unitId) || {};
+  const l = leaseFor(unitId, period);          // a lease always wins
+  const r = rentFor(unitId, period);           // a recorded month wins over today's rent
+  const hasCurrent = Number(u.current_rent || 0) > 0;
+
+  /* Show a month only where something is actually known about it: a lease
+     covering it, a payment recorded for it, or — for this month only — a
+     current rent on the unit. Never invent a history that was not supplied. */
+  if (!l && !r && !(period === CUR_PERIOD && hasCurrent)) return null;
+
+  const total = l ? Number(l.monthly_rent || 0)
+              : (r && r.amount_due != null) ? Number(r.amount_due)
+              : Number(u.current_rent || 0);
+  const program = l ? (l.subsidy_program || null)
+                : (r && r.govt_program) ? r.govt_program
+                : (u.subsidy_program || null);
+  const declaredGovt = (r && r.govt_due != null) ? Number(r.govt_due)
+                     : l ? Number(l.subsidy_amount || 0)
+                     : Number(u.subsidy_amount || 0);
+  /* A frozen rent (SCRIE / DRIE) never sends money. Otherwise whatever has
+     been entered as the agency share stands, programme named or not. */
+  const govtDue   = (program && NO_CASH.indexOf(program) >= 0) ? 0 : declaredGovt;
+  const tenantDue = (r && r.tenant_due != null) ? Number(r.tenant_due)
+                  : (!l && u.tenant_pays != null && u.tenant_pays !== '')
+                      ? Number(u.tenant_pays)
+                  : Math.max(total - govtDue, 0);
+  const govtPaid  = r ? Number(r.govt_paid || 0) : 0;
+  /* Records made before the split existed carry everything in amount_paid. */
+  const tenantPaid = r
+    ? (r.tenant_paid != null ? Number(r.tenant_paid) : Math.max(Number(r.amount_paid||0) - govtPaid, 0))
+    : 0;
+
+  return {
+    lease:l, row:r, unit:u, program:program, subsidised: govtDue > 0,
+    tenantName: l ? l.tenant_name : (u.current_tenant_name || null),
+    caseNo:     l ? l.subsidy_case_no : null,
+    leaseId:    l ? l.id : null,
+    leaseMissing: !l,
+    dueDay: (l && l.rent_due_day) || u.rent_due_day || 1,
+    total:total, govtDue:govtDue, tenantDue:tenantDue,
+    govtPaid:govtPaid, tenantPaid:tenantPaid, totalPaid: govtPaid + tenantPaid,
+    tenantShort: Math.max(tenantDue - tenantPaid, 0),
+    govtShort:   Math.max(govtDue   - govtPaid,   0),
+    dueDate: periodDue(period, (l && l.rent_due_day) || u.rent_due_day || 1)
+  };
+}
+
+/* What a unit is charged today, whether that came from a lease or not. */
+function currentRent(unitId) {
+  const l = activeLease(unitId);
+  if (l && l.start_date <= TODAY_ISO && l.end_date >= TODAY_ISO) return Number(l.monthly_rent||0);
+  const u = byId('units', unitId) || {};
+  return Number(u.current_rent || 0);
+}
+function currentTenant(unitId) {
+  const l = activeLease(unitId);
+  if (l && l.start_date <= TODAY_ISO && l.end_date >= TODAY_ISO && l.tenant_name) return l.tenant_name;
+  const u = byId('units', unitId) || {};
+  return u.current_tenant_name || null;
+}
+const myUnitIds = () => S.tenancies.filter(t => t.profile_id === (S.me && S.me.id)).map(t => t.unit_id);
+
+/* ====================================================================
+   CONNECT
+   ==================================================================== */
+function configProblem() {
+  if (!window.supabase || !window.supabase.createClient)
+    return 'The Supabase library did not load. Check your internet connection and refresh the page.';
+  if (isPlaceholder(CFG.SUPABASE_URL) || isPlaceholder(CFG.SUPABASE_ANON_KEY)) return 'NEEDS_SETUP';
+  if (!/^https:\/\/[^\s/]+\.[^\s/]+$/.test(String(CFG.SUPABASE_URL).replace(/\/$/,'')))
+    return 'The Project URL saved here does not look right. It should look like https://abcdefgh.supabase.co';
+  return null;
+}
+
+function shell(title, kids) {
+  const root = $('#root'); root.innerHTML = '';
+  root.appendChild(el('div',{class:'authpage'},[
+    el('div',{class:'authbar'},[
+      el('div',{class:'co'},[LOGO(), CO]),
+      el('div',{class:'tag', text:title})
+    ]),
+    el('div',{class:'authwrap'},[ el('div',{class:'authcard'},[ el('div',{class:'pad'}, kids) ]) ])
+  ]));
+}
+
+function showSetupError(msg) {
+  /* A resident must never be shown a technical message or a settings form.
+     Only someone who set this browser up, or who asked for it in the address
+     bar, sees the detail. */
+  let mine = false;
+  try { mine = !!savedConfig().SUPABASE_URL; } catch (e) {}
+  if (!mine && !/(^|[?&])setup=1(&|$)/.test(location.search)) { renderNotPublished(msg); return; }
+  shell('Setup', [
+    el('h2',{style:'font-size:17px;margin-bottom:10px', text:'Not connected yet'}),
+    el('div',{class:'errbox', text:msg}),
+    el('button',{class:'btn big', style:'margin-top:14px', text:'Start setup again',
+      onclick:()=>{ try{localStorage.removeItem('gl_setup');}catch(e){} location.reload(); }})
+  ]);
+}
+
+/* ---------------------------------------------------------------------------
+   ONE-TIME SETUP, done in the browser. No text editor needed.
+   --------------------------------------------------------------------------- */
+/* A visitor who lands on a copy that has not been published with its settings
+   must not be handed a technical form. Only the owner goes past this door. */
+function renderNotPublished(detail) {
+  shell('Not ready yet', [
+    el('h2',{style:'font-size:19px;margin-bottom:8px', text:'This page is not ready yet'}),
+    el('p',{class:'authnote',
+      text:'The resident portal for ' + CO + ' has not finished being set up. '
+         + 'Nothing is wrong at your end.'}),
+    el('div',{class:'note', style:'margin-top:14px'},[
+      el('b',{text:'If you are a resident'}),
+      el('div',{style:'margin-top:6px', text:'Please contact the office. A working link will be sent to you.'})
+    ]),
+    el('div',{class:'authalt'},[
+      el('button',{class:'linkbtn', type:'button', text:'I am the owner — connect this site',
+        onclick:()=>{ if (detail) toast(detail, true); renderSetup(true); }})
+    ])
+  ]);
+}
+
+function renderSetup(force) {
+  const saved = savedConfig();
+  const knownOwner = force || saved.SUPABASE_URL
+                  || /(^|[?&])setup=1(&|$)/.test(location.search);
+  if (!knownOwner) { renderNotPublished(); return; }
+  shell('First-time setup', buildSetupForm(saved));
+}
+
+function buildSetupForm(saved) {
+  const kids = [];
+  kids.push(el('h2',{style:'font-size:18px;margin-bottom:6px', text:'Connect your website'}));
+  kids.push(el('p',{class:'authnote',
+    text:'This is a one-time step. Copy two things out of Supabase and paste them below. Nothing here is technical — it is copy and paste.'}));
+
+  kids.push(el('div',{class:'note', style:'margin-bottom:16px'},[
+    'In Supabase, go to ',
+    el('b',{text:'Settings → API Keys'}),
+    '. You need the ',
+    el('b',{text:'Project URL'}),
+    ' and the ',
+    el('b',{text:'publishable'}),
+    ' (or ',
+    el('b',{text:'anon'}),
+    ') key.'
+  ]));
+
+  const f = el('form',{class:'formstack'});
+  const url = field({label:'1. Project URL', id:'su_url', ph:'https://abcdefgh.supabase.co',
+    value: saved.SUPABASE_URL || ''});
+  const key = field({label:'2. Publishable / anon key', id:'su_key', ph:'sb_publishable_…  or  eyJ…',
+    value: saved.SUPABASE_ANON_KEY || ''});
+  const co  = field({label:'Company name', id:'su_co', value: saved.COMPANY_NAME || 'Green Lodging LLC'});
+  const tel = field({label:'Emergency phone (shown to tenants)', id:'su_tel', type:'tel',
+    ph:'(718) 555-0134', value: saved.EMERGENCY_PHONE || ''});
+  const eml = field({label:'Office email (shown to tenants)', id:'su_eml', type:'email',
+    ph:'office@greenlodging.com', value: saved.OFFICE_EMAIL || ''});
+  const err = el('div',{class:'errbox hide'});
+  const go  = el('button',{class:'btn pri big', type:'submit', text:'Connect'});
+  [url, key, co, tel, eml].forEach(x => f.appendChild(x.wrap));
+  f.appendChild(err); f.appendChild(go);
+
+  kids.push(f);
+  kids.push(el('p',{class:'authnote', style:'margin-top:16px;font-size:12px',
+    text:'Never paste the key labelled “secret” or “service_role”. That one ignores every security rule. This page will refuse it.'}));
+
+  f.addEventListener('submit', async e => {
+    e.preventDefault();
+    err.classList.add('hide');
+    const u = url.input.value.trim().replace(/\/+$/,'');
+    const k = key.input.value.trim();
+    const fail = m => { err.textContent = m; err.classList.remove('hide'); };
+
+    if (!/^https:\/\/[^\s/]+\.[^\s/]+$/.test(u))
+      return fail('That Project URL does not look right. It should start with https:// and look like https://abcdefgh.supabase.co');
+    if (!k) return fail('Paste your publishable key.');
+    if (/secret|service_role/i.test(k))
+      return fail('That is the SECRET key — it must never go on a website. Go back to Supabase and copy the one labelled “publishable” or “anon” instead.');
+    if (k.length < 20) return fail('That key looks too short. Copy the whole thing.');
+
+    const cfg = {
+      SUPABASE_URL: u, SUPABASE_ANON_KEY: k,
+      COMPANY_NAME: co.input.value.trim() || 'Green Lodging LLC',
+      EMERGENCY_PHONE: tel.input.value.trim(),
+      OFFICE_EMAIL: eml.input.value.trim()
+    };
+
+    go.disabled = true; go.textContent = 'Checking…';
+    let client;
+    try { client = window.supabase.createClient(u, k); }
+    catch (ex) { go.disabled = false; go.textContent = 'Connect'; return fail('Could not use those values. Check them and try again.'); }
+    const probe = await client.from('buildings').select('name').limit(1);
+    go.disabled = false; go.textContent = 'Connect';
+    if (probe.error) {
+      return fail('Connected to Supabase, but it refused: “' + probe.error.message +
+        '”. Usually this means the database script has not been run yet, or the key belongs to a different project.');
+    }
+
+    try { localStorage.setItem('gl_setup', JSON.stringify(cfg)); } catch (ex) {}
+    showSetupDone(cfg, (probe.data || []).length);
+  });
+
+  return kids;
+}
+
+function showSetupDone(cfg, rows) {
+  shell('Setup complete', [
+    el('h2',{style:'font-size:18px;margin-bottom:6px', text:'Connected'}),
+    el('div',{class:'okbox', text: rows
+      ? 'Your database answered and your buildings are there. This computer can now use the site.'
+      : 'Your database answered. This computer can now use the site.'}),
+
+    el('p',{class:'authnote', style:'margin-top:16px'},),
+    el('div',{class:'note', style:'margin-top:14px'},[
+      el('b',{text:'One last thing, and then you are finished for good.'}),
+      el('div',{style:'margin-top:6px'},[
+        'What you just typed is saved on ', el('b',{text:'this computer only'}),
+        '. Download the finished file below and upload it to Netlify once — then it works for your manager and your tenants too, on any device.'
+      ])
+    ]),
+
+    el('button',{class:'btn pri big', style:'margin-top:16px',
+      text:'Download my finished website file', onclick:function(){ downloadConfigured(cfg, this); }}),
+
+    el('div',{style:'margin-top:14px'},[
+      el('div',{class:'eyebrow', text:'Then, in Netlify'}),
+      el('ol',{style:'margin:8px 0 0;padding-left:20px;font-size:13.5px;line-height:1.7;color:var(--ink-2)'},[
+        el('li',{text:'Open your site, click the Deploys tab'}),
+        el('li',{text:'Drag the downloaded index.html onto the drop area'}),
+        el('li',{text:'Wait 20 seconds, then reload your site'})
+      ])
+    ]),
+
+    el('button',{class:'btn big', style:'margin-top:18px', text:'Skip for now and open the website',
+      onclick:()=>location.reload()})
+  ]);
+}
+
+async function downloadConfigured(cfg, btn) {
+  const original = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Preparing…';
+
+  let src = null;
+  try {
+    const r = await fetch(location.href, {cache:'no-store'});
+    if (r.ok) src = await r.text();
+  } catch (e) {}
+  if (!src || src.indexOf('GL_CONFIG') < 0) {
+    src = '<!doctype html>\n' + document.documentElement.outerHTML;
+  }
+
+  /* Only the settings block at the very top is rewritten. Everything after it
+     is the program itself and must not be touched, so the edit is confined to
+     the few hundred characters that follow the word GL_CONFIG. */
+  const at = src.indexOf('GL_CONFIG');
+  if (at < 0) {
+    btn.disabled = false; btn.textContent = original;
+    toast('Could not build the file here. Tell Claude and it will send you a finished copy.', true);
+    return;
+  }
+  const END  = Math.min(at + 1600, src.length);
+  const head = src.slice(0, at), tail = src.slice(END);
+  let block  = src.slice(at, END);
+
+  const q = v => '"' + String(v == null ? '' : v).replace(/\\/g,'\\\\').replace(/"/g,'\\"') + '"';
+  const set = (key, val) => {
+    const re = new RegExp(key + '\\s*:\\s*"[^"]*"');
+    if (re.test(block)) block = block.replace(re, key + ': ' + q(val));
+  };
+  set('SUPABASE_URL',      cfg.SUPABASE_URL);
+  set('SUPABASE_ANON_KEY', cfg.SUPABASE_ANON_KEY);
+  set('COMPANY_NAME',      cfg.COMPANY_NAME);
+  set('EMERGENCY_PHONE',   cfg.EMERGENCY_PHONE);
+  set('OFFICE_EMAIL',      cfg.OFFICE_EMAIL);
+
+  if (/PASTE_YOUR_/.test(block)) {
+    btn.disabled = false; btn.textContent = original;
+    toast('Could not build the file here. Tell Claude and it will send you a finished copy.', true);
+    return;
+  }
+  src = head + block + tail;
+
+  const a = el('a',{href:URL.createObjectURL(new Blob([src],{type:'text/html'})), download:'index.html'});
+  document.body.appendChild(a); a.click(); a.remove();
+  btn.disabled = false; btn.textContent = 'Downloaded — get it from your Downloads folder';
+}
+
+/* ====================================================================
+   SIGN IN  /  SIGN UP
+   ==================================================================== */
+const LOGO = () => {
+  const s = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  s.setAttribute('viewBox','0 0 32 32'); s.setAttribute('width','26'); s.setAttribute('height','26');
+  s.innerHTML = '<rect width="32" height="32" rx="7" fill="rgba(255,255,255,.16)"/>'
+    + '<path d="M8 23V13l8-5 8 5v10" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linejoin="round"/>'
+    + '<rect x="13.5" y="17" width="5" height="6" fill="currentColor"/>';
+  return s;
+};
+
+function field(o) {
+  const w = el('div',{class:'fld'+(o.type==='checkbox'?' check':'')});
+  const i = el('input',{type:o.type||'text', id:o.id, placeholder:o.ph||'',
+    autocomplete:o.ac||null, inputmode:o.im||null, value:o.value||null});
+  if (o.type === 'checkbox') { w.appendChild(i); w.appendChild(el('label',{for:o.id, text:o.label})); }
+  else { w.appendChild(el('label',{for:o.id, text:o.label})); w.appendChild(i); }
+  if (o.help) w.appendChild(el('div',{class:'help', text:o.help}));
+  return {wrap:w, input:i};
+}
+
+/* ---------------------------------------------------------------------------
+   SIGN IN  /  CREATE ACCOUNT
+   One screen. Email and password, with the password readable on request.
+   If sign-in fails because there is no such account, the error itself offers
+   to create one — carrying the email across so nothing is retyped.
+   --------------------------------------------------------------------------- */
+const EYE_OPEN = '<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.8 12s3.8-7 10.2-7 10.2 7 10.2 7-3.8 7-10.2 7S1.8 12 1.8 12Z"/><circle cx="12" cy="12" r="3.2"/></svg>';
+const EYE_SHUT = '<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.9 5.2A9.9 9.9 0 0 1 12 5c6.4 0 10.2 7 10.2 7a18.5 18.5 0 0 1-2.7 3.6M6.3 6.4A18.3 18.3 0 0 0 1.8 12s3.8 7 10.2 7c2 0 3.7-.7 5.2-1.6"/><path d="m2 2 20 20"/><path d="M9.8 9.9a3.2 3.2 0 0 0 4.4 4.4"/></svg>';
+
+/* A password box with a reveal button and a Caps Lock warning. */
+function pwField(o) {
+  const wrap = el('div',{class:'fld'});
+  wrap.appendChild(el('label',{for:o.id, text:o.label}));
+  const box = el('div',{class:'pwwrap'});
+  const inp = el('input',{id:o.id, type:'password', placeholder:o.ph||'',
+    autocomplete:o.ac||'current-password', autocapitalize:'off', spellcheck:'false'});
+  const eye = el('button',{type:'button', class:'pweye', 'aria-label':'Show password',
+    'aria-pressed':'false', title:'Show password'});
+  eye.innerHTML = EYE_OPEN;
+  eye.addEventListener('click', () => {
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    eye.innerHTML = show ? EYE_SHUT : EYE_OPEN;
+    eye.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    eye.setAttribute('aria-pressed', show ? 'true' : 'false');
+    eye.title = show ? 'Hide password' : 'Show password';
+    const p = inp.selectionStart; inp.focus();
+    try { inp.setSelectionRange(p, p); } catch (e) {}
+  });
+  box.appendChild(inp); box.appendChild(eye);
+  wrap.appendChild(box);
+
+  const caps = el('div',{class:'capslock hide', text:'Caps Lock is on'});
+  wrap.appendChild(caps);
+  const checkCaps = e => {
+    const on = e.getModifierState && e.getModifierState('CapsLock');
+    caps.classList.toggle('hide', !on);
+  };
+  inp.addEventListener('keyup', checkCaps);
+  inp.addEventListener('keydown', checkCaps);
+  inp.addEventListener('blur', () => caps.classList.add('hide'));
+
+  if (o.meter) {
+    const m = el('div',{class:'meter', style:'margin-top:7px'});
+    const bar = el('i'); m.appendChild(bar);
+    const lab = el('div',{class:'help', style:'margin-top:5px', text:'Use at least 8 characters.'});
+    wrap.appendChild(m); wrap.appendChild(lab);
+    inp.addEventListener('input', () => {
+      const v = inp.value;
+      let s = 0;
+      if (v.length >= 8) s++;
+      if (v.length >= 12) s++;
+      if (/[a-z]/.test(v) && /[A-Z]/.test(v)) s++;
+      if (/\d/.test(v)) s++;
+      if (/[^A-Za-z0-9]/.test(v)) s++;
+      if (!v) s = 0;
+      const pct = [0, 20, 40, 60, 80, 100][Math.min(s,5)];
+      const col = s <= 1 ? 'var(--crit)' : s <= 3 ? 'var(--warn)' : 'var(--brand)';
+      bar.style.width = pct + '%'; bar.style.background = col;
+      lab.textContent = !v ? 'Use at least 8 characters.'
+        : v.length < 8 ? 'Too short — at least 8 characters.'
+        : s <= 2 ? 'Weak. Add a capital letter or a number.'
+        : s <= 3 ? 'Good.' : 'Strong.';
+    });
+  }
+  return {wrap, input: inp};
+}
+
+const LAST_EMAIL_KEY = 'gl_last_email';
+const rememberEmail = e => { try { localStorage.setItem(LAST_EMAIL_KEY, e); } catch (x) {} };
+const lastEmail = () => { try { return localStorage.getItem(LAST_EMAIL_KEY) || ''; } catch (x) { return ''; } };
+
+/* Two doors, one card: Resident and Property manager. Which door you pick
+   changes the wording and the sign-up form — never what you are allowed to
+   see. That is decided by your account, in the database. */
+let AUDIENCE = 'resident';
+try { if (localStorage.getItem('gl_audience') === 'staff') AUDIENCE = 'staff'; } catch (e) {}
+const isStaffDoor = () => AUDIENCE === 'staff';
+
+/* mode: 'signin' | 'signup'.  seed: values carried across from the other mode. */
+function renderAuth(mode, seed) {
+  seed = seed || {};
+  if (seed.audience) AUDIENCE = seed.audience;
+  const root = $('#root'); root.innerHTML = '';
+
+  const pad  = el('div',{class:'pad'});
+  const tabs = el('div',{class:'audtabs', role:'tablist', 'aria-label':'Who is signing in'});
+  [['resident','Resident'], ['staff','Property manager']].forEach(([k, label]) => {
+    const b = el('button',{type:'button', text:label, role:'tab', id:'aud_'+k});
+    b.setAttribute('aria-selected', AUDIENCE === k ? 'true' : 'false');
+    b.addEventListener('click', () => {
+      if (AUDIENCE === k) return;
+      AUDIENCE = k;
+      try { localStorage.setItem('gl_audience', k); } catch (e) {}
+      renderAuth(mode, seed);
+    });
+    tabs.appendChild(b);
+  });
+
+  root.appendChild(el('div',{class:'authpage solo'},[
+    el('div',{class:'authwrap'},[
+      el('div',{class:'authcard'},[
+        el('div',{class:'authtop'},[
+          el('div',{class:'authmark'},[LOGO()]),
+          el('h1',{class:'authco', text:CO}),
+          el('p',{class:'authsub', text:'Five buildings in Brooklyn, managed in one place.'})
+        ]),
+        tabs,
+        pad
+      ]),
+      el('p',{class:'authfoot',
+        text:'What you can see is decided by your account, not by the tab you pick.'})
+    ])
+  ]));
+  (mode === 'signup' ? paneSignup : paneSignIn)(pad, seed);
+}
+
+/* ---------------------------------------------------------------- sign in */
+function paneSignIn(pad, seed) {
+  pad.appendChild(el('p',{class:'authnote', style:'margin-bottom:18px',
+    text: isStaffDoor()
+      ? 'For the property manager and the office. Everything across all five buildings.'
+      : 'Your apartment: rent, lease, bills and repairs.'}));
+
+  const f  = el('form',{class:'formstack', novalidate:'novalidate'});
+  const em = field({label:'Email', id:'in_email', type:'email', ac:'username',
+    ph:'you@example.com', value: seed.email || lastEmail()});
+  em.input.setAttribute('autocapitalize','off');
+  em.input.setAttribute('spellcheck','false');
+  const pw = pwField({label:'Password', id:'in_pw', ac:'current-password'});
+  const err = el('div',{class:'errbox hide', role:'alert', 'aria-live':'assertive'});
+  const btn = el('button',{class:'btn pri big', type:'submit', text:'Sign in'});
+
+  const forgot = el('div',{class:'rowend'},[
+    el('button',{class:'linkbtn', type:'button', text:'Forgot your password?', onclick:async()=>{
+      const e2 = em.input.value.trim();
+      if (!e2) { showErr(err, 'Type your email in the box above first, then tap this again.'); em.input.focus(); return; }
+      const { error } = await S.sb.auth.resetPasswordForEmail(e2, { redirectTo: location.origin + location.pathname });
+      if (error) showErr(err, 'Could not send the reset email. Try again in a minute.');
+      else { err.classList.add('hide'); toast('If that email has an account, a reset link is on its way.'); }
+    }})
+  ]);
+
+  f.appendChild(em.wrap); f.appendChild(pw.wrap); f.appendChild(forgot);
+  f.appendChild(err); f.appendChild(btn);
+  pad.appendChild(f);
+
+  if (CFG.ENABLE_SMS_LOGIN) {
+    pad.appendChild(el('div',{style:'margin-top:14px;text-align:center'},[
+      el('button',{class:'linkbtn', type:'button', text:'Residents: sign in with a text message instead',
+        onclick:()=>{ pad.innerHTML=''; paneSms(pad); }})
+    ]));
+  }
+
+  pad.appendChild(el('div',{class:'authalt'},[
+    isStaffDoor() ? 'New to the office? ' : 'First time here? ',
+    el('button',{class:'linkbtn', type:'button',
+      text: isStaffDoor() ? 'Create your staff account' : 'Set up with your invite code',
+      onclick:()=>renderAuth('signup', {email: em.input.value.trim()})})
+  ]));
+
+  f.addEventListener('submit', async e => {
+    e.preventDefault();
+    err.classList.add('hide');
+    const email = em.input.value.trim(), pass = pw.input.value;
+    if (!email)  { showErr(err, 'Enter your email address.'); em.input.focus(); return; }
+    if (!/.+@.+\..+/.test(email)) { showErr(err, 'That does not look like an email address.'); em.input.focus(); return; }
+    if (!pass)   { showErr(err, 'Enter your password.'); pw.input.focus(); return; }
+
+    btn.disabled = true; btn.textContent = 'Signing in…';
+    const { error } = await S.sb.auth.signInWithPassword({ email: email, password: pass });
+    if (!error) { rememberEmail(email); return; }          // page reloads on success
+    btn.disabled = false; btn.textContent = 'Sign in';
+
+    const m = String(error.message || '').toLowerCase();
+    if (m.indexOf('invalid login') >= 0) {
+      /* Supabase deliberately will not say whether the email exists, so offer
+         both roads instead of guessing. */
+      err.innerHTML = '';
+      err.appendChild(el('b',{text:'That email and password did not match.'}));
+      err.appendChild(el('div',{text:'Check for a typo — tap the eye to read your password. If you have never set up an account here, create one.'}));
+      err.appendChild(el('div',{style:'margin-top:9px;display:flex;gap:8px;flex-wrap:wrap'},[
+        el('button',{class:'btn sm pri', type:'button', text:'Create an account with this email',
+          onclick:()=>renderAuth('signup', {email: email})})
+      ]));
+      err.classList.remove('hide');
+      pw.input.select();
+    } else {
+      showErr(err, friendlyAuthError(error));
+    }
+  });
+
+  setTimeout(() => { (em.input.value ? pw.input : em.input).focus(); }, 60);
+}
+
+function showErr(box, msg) { box.innerHTML = ''; box.textContent = msg; box.classList.remove('hide'); }
+
+/* --------------------------------------------------------- create account */
+function paneSignup(pad, seed) {
+  const staffDoor = isStaffDoor();
+  pad.appendChild(el('p',{class:'authnote', style:'margin-bottom:18px',
+    text: staffDoor
+      ? 'Create your account, then the owner switches on your access. Until then you will see an empty portal.'
+      : 'Use the invite code from the slip you were given. It works once, for your apartment.'}));
+
+  const f = el('form',{class:'formstack', novalidate:'novalidate'});
+  const nm = field({label:'Full name', id:'up_name', ac:'name', ph:'As it appears on the lease',
+    value: seed.name || ''});
+  const em = field({label:'Email', id:'up_email', type:'email', ac:'username',
+    ph:'you@example.com', value: seed.email || ''});
+  em.input.setAttribute('autocapitalize','off');
+  em.input.setAttribute('spellcheck','false');
+  const pw = pwField({label:'Choose a password', id:'up_pw', ac:'new-password', meter:true});
+  const ph = field({label:'Mobile number (optional)', id:'up_phone', type:'tel', im:'tel', ph:'(718) 555-0134'});
+  const cd = field({label:'Invite code', id:'up_code', ph:'RALPH-2R-4K9',
+    help:'From the slip your landlord gave you.'});
+  cd.input.setAttribute('autocapitalize','characters');
+  const err = el('div',{class:'errbox hide', role:'alert', 'aria-live':'assertive'});
+  const btn = el('button',{class:'btn pri big', type:'submit', text:'Create my account'});
+
+  const fields = staffDoor ? [nm, em, pw, ph] : [nm, em, pw, ph, cd];
+  fields.forEach(x => f.appendChild(x.wrap));
+  f.appendChild(err); f.appendChild(btn);
+  pad.appendChild(f);
+
+  pad.appendChild(el('div',{class:'authalt'},[
+    'Already have an account? ',
+    el('button',{class:'linkbtn', type:'button', text:'Sign in',
+      onclick:()=>renderAuth('signin', {email: em.input.value.trim()})})
+  ]));
+
+  f.addEventListener('submit', async e => {
+    e.preventDefault();
+    err.classList.add('hide');
+    const name = nm.input.value.trim(), email = em.input.value.trim(), pass = pw.input.value;
+    if (!name)  { showErr(err, 'Enter your full name.'); nm.input.focus(); return; }
+    if (!/.+@.+\..+/.test(email)) { showErr(err, 'Enter a valid email address.'); em.input.focus(); return; }
+    if (pass.length < 8) { showErr(err, 'Your password needs at least 8 characters. Tap the eye to check what you typed.'); pw.input.focus(); return; }
+
+    btn.disabled = true; btn.textContent = 'Creating…';
+    const { data, error } = await S.sb.auth.signUp({
+      email: email, password: pass, options:{ data:{ full_name: name } }
+    });
+
+    if (error) {
+      btn.disabled = false; btn.textContent = 'Create my account';
+      const m = String(error.message || '').toLowerCase();
+      if (m.indexOf('already') >= 0 || m.indexOf('registered') >= 0) {
+        err.innerHTML = '';
+        err.appendChild(el('b',{text:'There is already an account with that email.'}));
+        err.appendChild(el('div',{text:'Sign in instead, or use “Forgot your password?” if you cannot remember it.'}));
+        err.appendChild(el('div',{style:'margin-top:9px'},[
+          el('button',{class:'btn sm pri', type:'button', text:'Go to sign in',
+            onclick:()=>renderAuth('signin', {email: email})})
+        ]));
+        err.classList.remove('hide');
+      } else showErr(err, friendlyAuthError(error));
+      return;
+    }
+
+    rememberEmail(email);
+
+    if (!data.session) {
+      const s2 = await S.sb.auth.signInWithPassword({ email: email, password: pass });
+      if (s2.error) {
+        pad.innerHTML = '';
+        pad.appendChild(el('h2',{style:'font-size:18px;margin-bottom:8px', text:'Almost there'}));
+        pad.appendChild(el('div',{class:'okbox',
+          text: staffDoor
+            ? 'Your account was created. Check your email for a confirmation link, then come back and sign in. The owner switches on your office access after that.'
+            : 'Your account was created. Check your email for a confirmation link, then come back and sign in — you can enter your invite code at that point.'}));
+        pad.appendChild(el('button',{class:'btn big', style:'margin-top:14px', text:'Back to sign in',
+          onclick:()=>renderAuth('signin', {email: email})}));
+        return;
+      }
+    }
+
+    const code = staffDoor ? '' : cd.input.value.trim();
+    if (code) {
+      const r = await S.sb.rpc('redeem_invite', {
+        p_code: code, p_full_name: name, p_phone: ph.input.value.trim()
+      });
+      if (r.error || (r.data && r.data.ok === false)) {
+        /* The account exists and they are signed in; only the code failed, so
+           hand them straight to the screen that asks for it again. */
+        toast((r.data && r.data.error) || 'That invite code did not work.', true);
+      }
+    }
+    location.reload();
+  });
+
+  setTimeout(() => { (seed.email ? nm.input : nm.input).focus(); }, 60);
+}
+
+/* ----------------------------------- residents, by text message (optional) */
+function paneSms(pad) {
+  pad.appendChild(el('h2',{style:'font-size:20px;margin-bottom:5px', text:'Sign in by text'}));
+  pad.appendChild(el('p',{class:'authnote', text:'Enter your mobile number and we will text you a 6-digit code.'}));
+  const f = el('form',{class:'formstack', novalidate:'novalidate'});
+  const ph = field({label:'Mobile number', id:'sm_phone', type:'tel', im:'tel', ph:'(718) 555-0134', ac:'tel'});
+  const err = el('div',{class:'errbox hide', role:'alert'});
+  const btn = el('button',{class:'btn pri big', type:'submit', text:'Text me a code'});
+  f.appendChild(ph.wrap); f.appendChild(err); f.appendChild(btn);
+  pad.appendChild(f);
+  pad.appendChild(el('div',{class:'authalt'},[
+    el('button',{class:'linkbtn', type:'button', text:'Use email and password instead',
+      onclick:()=>renderAuth('signin', {})})
+  ]));
+
+  f.addEventListener('submit', async e => {
+    e.preventDefault(); err.classList.add('hide');
+    const digits = ph.input.value.replace(/\D/g,'');
+    if (digits.length < 10) { showErr(err, 'Enter your full 10-digit mobile number.'); return; }
+    const phone = digits.length === 10 ? (CFG.PHONE_COUNTRY_CODE||'+1') + digits : '+' + digits;
+    btn.disabled = true; btn.textContent = 'Sending…';
+    const { error } = await S.sb.auth.signInWithOtp({ phone: phone });
+    if (error) { showErr(err, friendlyAuthError(error)); btn.disabled = false; btn.textContent = 'Text me a code'; return; }
+
+    pad.innerHTML = '';
+    pad.appendChild(el('h2',{style:'font-size:20px;margin-bottom:5px', text:'Check your phone'}));
+    pad.appendChild(el('p',{class:'authnote', text:'We texted a 6-digit code to ' + ph.input.value + '. It expires in a few minutes.'}));
+    const f2 = el('form',{class:'formstack', novalidate:'novalidate'});
+    const cd = field({label:'6-digit code', id:'sm_code', im:'numeric', ph:'123456', ac:'one-time-code'});
+    const e2 = el('div',{class:'errbox hide', role:'alert'});
+    const b2 = el('button',{class:'btn pri big', type:'submit', text:'Sign in'});
+    f2.appendChild(cd.wrap); f2.appendChild(e2); f2.appendChild(b2);
+    pad.appendChild(f2);
+    pad.appendChild(el('div',{class:'authalt'},[
+      el('button',{class:'linkbtn', type:'button', text:'Use a different number',
+        onclick:()=>{ pad.innerHTML=''; paneSms(pad); }})
+    ]));
+    cd.input.focus();
+    f2.addEventListener('submit', async ev => {
+      ev.preventDefault(); e2.classList.add('hide');
+      b2.disabled = true; b2.textContent = 'Checking…';
+      const r = await S.sb.auth.verifyOtp({ phone: phone, token: cd.input.value.trim(), type:'sms' });
+      if (r.error) { showErr(e2, 'That code did not work. Check it and try again.'); b2.disabled = false; b2.textContent = 'Sign in'; }
+    });
+  });
+}
+
+/* --- a signed-in tenant who has not claimed an apartment yet -------- */
+function renderClaim() {
+  const root = $('#root'); root.innerHTML = '';
+  const pad = el('div',{class:'pad'});
+  pad.appendChild(el('h2',{style:'font-size:17px;margin-bottom:8px', text:'One more step'}));
+  pad.appendChild(el('p',{class:'authnote', text:'Enter the invite code for your apartment. Your landlord gives you this once.'}));
+  const form = el('form',{class:'formstack'});
+  const code = field({label:'Invite code', id:'cl_code', ph:'RALPH-2R-4K9'});
+  const name = field({label:'Your full name', id:'cl_name', value:(S.me && S.me.full_name) || ''});
+  const phone= field({label:'Mobile number', id:'cl_phone', type:'tel', im:'tel', value:(S.me && S.me.phone) || ''});
+  const err  = el('div',{class:'errbox hide'});
+  const btn  = el('button',{class:'btn pri big', type:'submit', text:'Connect my apartment'});
+  [code,name,phone].forEach(f=>form.appendChild(f.wrap));
+  form.appendChild(err); form.appendChild(btn);
+  form.addEventListener('submit', async e => {
+    e.preventDefault(); err.classList.add('hide');
+    btn.disabled=true; btn.textContent='Checking…';
+    const r = await S.sb.rpc('redeem_invite', { p_code: code.input.value.trim(),
+      p_full_name: name.input.value.trim(), p_phone: phone.input.value.trim() });
+    if (r.error || (r.data && r.data.ok === false)) {
+      err.textContent = (r.data && r.data.error) || 'That code did not work.';
+      err.classList.remove('hide'); btn.disabled=false; btn.textContent='Connect my apartment'; return;
+    }
+    location.reload();
+  });
+  pad.appendChild(form);
+  pad.appendChild(el('div',{class:'authswitch'},[
+    el('button',{class:'doclink', type:'button', text:'Sign out', onclick:()=>S.sb.auth.signOut().then(()=>location.reload())})
+  ]));
+  root.appendChild(el('div',{class:'authpage'},[
+    el('div',{class:'authbar'},[ el('div',{class:'co'},[LOGO(), CO]) ]),
+    el('div',{class:'authwrap'},[ el('div',{class:'authcard'},[pad]) ])
+  ]));
+}
+
+/* --- signed in through the Property manager door, but the account has --
+   --- not been given office access yet -------------------------------- */
+function renderNoStaffAccess() {
+  const root = $('#root'); root.innerHTML = '';
+  const mail = (S.me && S.me.email) || '';
+  const pad = el('div',{class:'pad'});
+  pad.appendChild(el('h2',{style:'font-size:19px;margin-bottom:6px', text:'Office access is not switched on yet'}));
+  pad.appendChild(el('p',{class:'authnote',
+    text:'You are signed in, but this account has not been given office access. Only the owner can switch it on, and it takes about a minute.'}));
+
+  if (mail) {
+    const box = el('div',{class:'codebox'});
+    box.appendChild(el('div',{class:'codelab', text:'This account'}));
+    box.appendChild(el('div',{class:'codeval mono', text:mail}));
+    pad.appendChild(box);
+  }
+
+  const steps = el('ol',{class:'howto'});
+  [ 'Open Supabase and go to SQL Editor → New query.',
+    'Paste the line below — your email is already filled in for you.',
+    'Press Run, then come back here and refresh the page.'
+  ].forEach(t => steps.appendChild(el('li',{text:t})));
+  pad.appendChild(steps);
+
+  const sql = "update public.profiles set role = 'owner', is_active = true where email = '" + (mail || 'your@email.com') + "';";
+  const pre = el('pre',{class:'sqlbox mono', text:sql});
+  pad.appendChild(pre);
+  pad.appendChild(el('button',{class:'btn big', style:'width:100%', text:'Copy this line',
+    onclick:async (e)=>{ try { await navigator.clipboard.writeText(sql); e.target.textContent='Copied'; }
+                         catch(_) { e.target.textContent='Select it above and copy'; } }}));
+
+  pad.appendChild(el('div',{class:'authalt'},[
+    el('button',{class:'linkbtn', type:'button', text:'I already ran it — check again',
+      onclick:()=>location.reload()})
+  ]));
+  pad.appendChild(el('div',{class:'authswitch'},[
+    el('button',{class:'doclink', type:'button', text:'I am a resident, not office staff',
+      onclick:()=>{ try{ localStorage.setItem('gl_audience','resident'); }catch(_){} AUDIENCE='resident'; renderClaim(); }}),
+    el('span',{text:' · '}),
+    el('button',{class:'doclink', type:'button', text:'Sign out',
+      onclick:()=>S.sb.auth.signOut().then(()=>location.reload())})
+  ]));
+
+  root.appendChild(el('div',{class:'authpage'},[
+    el('div',{class:'authbar'},[ el('div',{class:'co'},[LOGO(), CO]) ]),
+    el('div',{class:'authwrap'},[ el('div',{class:'authcard'},[pad]) ])
+  ]));
+}
+
+function friendlyAuthError(e) {
+  const m = String(e && e.message || '').toLowerCase();
+  if (m.includes('invalid login')) return 'That email and password do not match. Check for typos, or use "Forgot your password?".';
+  if (m.includes('email not confirmed')) return 'Your email is not confirmed yet. Check your inbox for the confirmation link.';
+  if (m.includes('already registered') || m.includes('already been registered')) return 'There is already an account with that email. Sign in instead.';
+  if (m.includes('rate') || m.includes('too many')) return 'Too many attempts. Wait a minute and try again.';
+  if (m.includes('sms') || m.includes('phone')) return 'Text-message sign-in is not switched on yet. Use email and password.';
+  if (m.includes('password')) return 'That password is too short or too weak. Use at least 8 characters.';
+  return (e && e.message) || 'Something went wrong. Try again.';
+}
+
+/* ====================================================================
+   LOAD DATA
+   ==================================================================== */
+async function loadAll() {
+  const q = (t, sel) => S.sb.from(t).select(sel || '*');
+  const jobs = [
+    ['buildings',    q('buildings')],
+    ['units',        q('units')],
+    ['tenancies',    q('tenancies')],
+    ['leases',       q('leases')],
+    ['rent',         q('rent_payments')],
+    ['complaints',   q('complaints')],
+    ['cupdates',     q('complaint_updates')],
+    ['documents',    q('documents')],
+    ['utilBills',    q('utility_bills')],
+    ['charges',      q('other_charges')]
+  ];
+  if (isStaff()) {
+    jobs.push(['utilAccounts', q('utility_accounts')]);
+    jobs.push(['profiles',     q('profiles')]);
+    jobs.push(['invites',      q('unit_invites')]);
+    jobs.push(['expenses',     q('building_expenses')]);
+  }
+  const res = await Promise.all(jobs.map(j => j[1]));
+  res.forEach((r, i) => {
+    const key = jobs[i][0];
+    if (r.error) { console.warn('load', key, r.error.message); S[key] = []; }
+    else S[key] = r.data || [];
+  });
+  S.loading = false;
+}
+
+async function loadMe() {
+  const { data, error } = await S.sb.from('profiles').select('*').eq('id', S.session.user.id).maybeSingle();
+  if (error) { console.warn(error.message); }
+  S.me = data || { id:S.session.user.id, role:'tenant', full_name:'', email:S.session.user.email };
+}
+
+/* ====================================================================
+   FILES
+   ==================================================================== */
+async function uploadTo(path, file) {
+  const { error } = await S.sb.storage.from('docs').upload(path, file, { upsert:false, contentType:file.type || undefined });
+  if (error) throw error;
+  return path;
+}
+function staffPath(buildingId, unitId, tenantVisible, filename) {
+  const stamp = uid4().slice(0,8) + '-' + cleanName(filename);
+  return (tenantVisible && unitId) ? ('t/' + unitId + '/' + stamp) : ('s/' + (buildingId || 'misc') + '/' + stamp);
+}
+function tenantInboxPath(unitId, filename) {
+  return 't/' + unitId + '/inbox/' + uid4().slice(0,8) + '-' + cleanName(filename);
+}
+async function openFile(path) {
+  if (!path) return;
+  const { data, error } = await S.sb.storage.from('docs').createSignedUrl(path, 3600);
+  if (error || !data) { toast('Could not open that file.', true); return; }
+  window.open(data.signedUrl, '_blank', 'noopener');
+}
+function fileBtn(path, label) {
+  if (!path) return el('span',{class:'sub', text:'—'});
+  return el('button',{class:'doclink', type:'button', text:label||'View', onclick:()=>openFile(path)});
+}
+
+/* Records a document row; uploads first. Returns the row or null. */
+async function fileDocument(file, meta) {
+  if (!file) return null;
+  if (file.size > 20*1024*1024) { toast('That file is larger than 20 MB. Try a photo instead of a scan.', true); return null; }
+  const path = meta.asTenant ? tenantInboxPath(meta.unit_id, file.name)
+                             : staffPath(meta.building_id, meta.unit_id, meta.tenant_visible, file.name);
+  try { await uploadTo(path, file); }
+  catch (e) { toast('Upload failed: ' + (e.message || 'unknown error'), true); return null; }
+  const row = {
+    building_id: meta.building_id || null, unit_id: meta.unit_id || null,
+    category: meta.category || 'Other', name: file.name, storage_path: path,
+    size_bytes: file.size, content_type: file.type || null,
+    tenant_visible: meta.asTenant ? true : !!meta.tenant_visible,
+    note: meta.note || null, uploaded_by: S.me.id
+  };
+  const { data, error } = await S.sb.from('documents').insert(row).select().single();
+  if (error) { toast('File uploaded but not filed: ' + error.message, true); return { storage_path: path }; }
+  S.documents.push(data);
+  return data;
+}
+
+/* ====================================================================
+   SAVE HELPERS
+   ==================================================================== */
+async function put(table, stateKey, row, id) {
+  let res;
+  if (id) res = await S.sb.from(table).update(row).eq('id', id).select().single();
+  else    res = await S.sb.from(table).insert(row).select().single();
+  if (res.error) { toast(friendlyDbError(res.error), true); return null; }
+  const arr = S[stateKey];
+  const i = arr.findIndex(x => x.id === res.data.id);
+  if (i >= 0) arr[i] = res.data; else arr.push(res.data);
+  return res.data;
+}
+async function del(table, stateKey, id, keyCol) {
+  const col = keyCol || 'id';
+  const { error } = await S.sb.from(table).delete().eq(col, id);
+  if (error) { toast(friendlyDbError(error), true); return false; }
+  S[stateKey] = S[stateKey].filter(x => x[col] !== id);
+  return true;
+}
+function friendlyDbError(e) {
+  const m = String(e && e.message || '');
+  if (/row-level security|violates row-level/i.test(m)) return 'Your account is not allowed to do that.';
+  if (/duplicate key/i.test(m) && /unit_invites/i.test(m)) return 'That invite code already exists. Pick another.';
+  if (/duplicate key/i.test(m) && /units/i.test(m)) return 'That unit number already exists in this building.';
+  if (/duplicate key/i.test(m) && /rent_payments/i.test(m)) return 'There is already a rent record for that unit and month.';
+  if (/duplicate key/i.test(m)) return 'That record already exists.';
+  if (/foreign key/i.test(m)) return 'Something it points at was deleted. Refresh the page.';
+  return m || 'Could not save.';
+}
+
+/* ====================================================================
+   MODAL / FORM ENGINE
+   ==================================================================== */
+function closeModal(){ $('#modalRoot').innerHTML=''; document.body.style.overflow=''; }
+
+function openForm(o) {
+  const root = $('#modalRoot'); root.innerHTML=''; document.body.style.overflow='hidden';
+  const body = el('div',{class:'mb'});
+  if (o.note) body.appendChild(el('div',{class:'note', text:o.note}));
+  const errBox = el('div',{class:'errbox hide'});
+  const inputs = {};
+
+  const make = f => {
+    const id = 'gf_' + f.k;
+    const v  = (o.values || {})[f.k];
+    const w  = el('div',{class:'fld' + (f.t==='checkbox'?' check':'')});
+    let inp;
+    if (f.t === 'select') {
+      inp = el('select',{id});
+      if (f.ph) inp.appendChild(el('option',{value:'', text:f.ph}));
+      (f.opts||[]).forEach(x => {
+        const val = (typeof x==='string') ? x : x.v, lab = (typeof x==='string') ? x : x.l;
+        inp.appendChild(el('option',{value:val, text:lab}));
+      });
+      inp.value = (v==null ? '' : String(v));
+      if (inp.selectedIndex < 0) inp.selectedIndex = 0;
+    } else if (f.t === 'textarea') {
+      inp = el('textarea',{id, placeholder:f.ph||''}); inp.value = v || '';
+    } else if (f.t === 'file') {
+      inp = el('input',{id, type:'file', accept:f.accept || 'image/*,application/pdf'});
+    } else if (f.t === 'checkbox') {
+      inp = el('input',{id, type:'checkbox'}); inp.checked = !!v;
+    } else {
+      inp = el('input',{id, type:f.t||'text', placeholder:f.ph||'',
+        step: f.t==='number' ? '0.01' : null, inputmode: f.t==='number' ? 'decimal' : null});
+      inp.value = (v==null ? '' : v);
+    }
+    if (f.t === 'checkbox') { w.appendChild(inp); w.appendChild(el('label',{for:id, text:f.l})); }
+    else { w.appendChild(el('label',{for:id, text:f.l})); w.appendChild(inp); }
+    if (f.help) w.appendChild(el('div',{class:'help', text:f.help}));
+    inputs[f.k] = { inp, f };
+    return w;
+  };
+
+  for (let i=0; i<o.fields.length; i++) {
+    const f = o.fields[i];
+    if (f.t === 'hr') { body.appendChild(el('div',{class:'eyebrow', text:f.l, style:'margin-top:4px'})); continue; }
+    const n = o.fields[i+1];
+    if (f.half && n && n.half) { const r = el('div',{class:'row2'}); r.appendChild(make(f)); r.appendChild(make(n)); body.appendChild(r); i++; }
+    else body.appendChild(make(f));
+  }
+  body.appendChild(errBox);
+
+  const foot = el('div',{class:'mf'});
+  if (o.danger && isOwner()) foot.appendChild(el('button',{class:'btn danger', text:o.danger.label, style:'margin-right:auto',
+    onclick: async () => { if (!confirm('Delete this permanently? This cannot be undone.')) return; closeModal(); await o.danger.fn(); render(); }}));
+  foot.appendChild(el('button',{class:'btn', text:'Cancel', onclick:closeModal}));
+  const go = el('button',{class:'btn pri', text:o.submit || 'Save'});
+  foot.appendChild(go);
+
+  const modal = el('div',{class:'modal'},[ el('div',{class:'mh'},[el('h3',{text:o.title})]), body, foot ]);
+  const scrim = el('div',{class:'scrim', onclick:e=>{ if(e.target===scrim) closeModal(); }},[modal]);
+  root.appendChild(scrim);
+  const esc = e => { if (e.key === 'Escape') { closeModal(); document.removeEventListener('keydown', esc); } };
+  document.addEventListener('keydown', esc);
+  const first = body.querySelector('input,select,textarea'); if (first) first.focus();
+
+  go.addEventListener('click', async () => {
+    const vals = {}, files = {};
+    let missing = null;
+    for (const k in inputs) {
+      const { inp, f } = inputs[k];
+      if (f.t === 'file') { files[k] = (inp.files && inp.files[0]) || null; continue; }
+      let v = (f.t === 'checkbox') ? inp.checked : inp.value;
+      if (f.req && (v === '' || v == null)) missing = missing || f.l;
+      if (f.t === 'number') v = (v === '' ? null : Number(v));
+      if (typeof v === 'string') v = v.trim();
+      if (v === '') v = null;
+      vals[k] = v;
+    }
+    if (missing) { errBox.textContent = '“' + missing + '” is required.'; errBox.classList.remove('hide'); return; }
+    errBox.classList.add('hide');
+    go.disabled = true; go.textContent = 'Saving…';
+    try { await o.onSubmit(vals, files); closeModal(); render(); }
+    catch (err) {
+      go.disabled = false; go.textContent = o.submit || 'Save';
+      errBox.textContent = (err && err.message) || 'Could not save.'; errBox.classList.remove('hide');
+    }
+  });
+}
+
+const buildingOpts = () => S.buildings.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(b=>({v:b.id,l:b.name}));
+const unitOptsAll  = () => S.units.slice()
+  .sort((a,b)=>(bName(a.building_id)+a.label).localeCompare(bName(b.building_id)+b.label, undefined, {numeric:true}))
+  .map(u=>({v:u.id, l:bName(u.building_id)+' — '+u.label}));
+
+/* ====================================================================
+   ALERT ENGINE   (staff view)
+   ==================================================================== */
+function buildAlerts() {
+  const A = [];
+  const push = (sev,type,t,d,when,go) => A.push({sev,type,t,d,when,go});
+
+  S.leases.forEach(l => {
+    if (!l.end_date) return;
+    const n = days(l.end_date);
+    if (!byId('units', l.unit_id)) return;
+    const who = l.tenant_name || 'vacant';
+    if (n < 0)
+      push('crit','Lease', uFull(l.unit_id)+' — lease expired',
+        who+' · expired '+fmtDate(l.end_date)+', '+Math.abs(n)+' days ago. The tenancy continues month-to-month until renewed.', Math.abs(n)+'d ago','buildings');
+    else if (n <= RENEW_CLOSE)
+      push('crit','Renewal', uFull(l.unit_id)+' — renewal offer is late',
+        'Lease ends '+fmtDate(l.end_date)+'. The 90–150 day window to serve the renewal offer has closed. Serve DHCR form RTP-8 immediately.', 'in '+n+'d','buildings');
+    else if (n <= RENEW_OPEN)
+      push('warn','Renewal', uFull(l.unit_id)+' — serve the renewal lease now',
+        who+' · lease ends '+fmtDate(l.end_date)+'. You are inside the 90–150 day window to offer a renewal (DHCR form RTP-8).', 'in '+n+'d','buildings');
+    else if (n <= 210)
+      push('info','Lease', uFull(l.unit_id)+' — renewal window opens soon',
+        'Lease ends '+fmtDate(l.end_date)+'. You may serve the renewal offer from '+fmtDate(isoOf(new Date(new Date(l.end_date+'T00:00:00') - RENEW_OPEN*864e5)))+'.', 'in '+n+'d','buildings');
+
+    const u = byId('units', l.unit_id);
+    if (u && u.is_stabilized && l.rider_signed === false && n > 0)
+      push('warn','Rider', uFull(l.unit_id)+' — rent stabilization rider not signed',
+        'A signed DHCR rider must be attached to every stabilized lease.', '', 'buildings');
+  });
+
+  /* Rent arrears, split by who owes it — you chase a tenant and an agency in
+     completely different ways, and only one of them can be taken to court. */
+  [addMonths(CUR_PERIOD,-1), CUR_PERIOD].forEach(period => {
+    S.units.forEach(u => {
+      const s = split(u.id, period);
+      if (!s || !s.total) return;
+      const n = days(s.dueDate);
+      const who = s.tenantName || 'the tenant';
+
+      /* Never chase a unit no payment was ever recorded for — that is a gap in
+         the records, not evidence that anyone is behind. */
+      const hasHistory = S.rent.some(r => r.unit_id === u.id);
+      if (!hasHistory) return;
+
+      if (s.tenantShort > 0.5) {
+        if (n < 0)
+          push('crit','Tenant rent', uFull(u.id)+' — '+(s.subsidised?'tenant share':'rent')+' unpaid, '+fmtPeriod(period),
+            who+' owes '+money(s.tenantShort)+
+            (s.subsidised ? ' of their '+money(s.tenantDue)+' share ('+s.program+' covers '+money(s.govtDue)+')' : '')+
+            ' · '+Math.abs(n)+' days past the '+fmtShort(s.dueDate)+' due date.', money0(s.tenantShort),'rent');
+        else if (n <= 7)
+          push('warn','Tenant rent', uFull(u.id)+' — '+(s.subsidised?'tenant share':'rent')+' due '+fmtShort(s.dueDate),
+            who+' · '+money(s.tenantShort)+' due in '+n+' day'+(n===1?'':'s')+'.', money0(s.tenantShort),'rent');
+      }
+
+      if (s.govtShort > 0.5) {
+        if (n < -2)
+          push('crit','Agency', uFull(u.id)+' — '+s.program+' has not paid, '+fmtPeriod(period),
+            money(s.govtShort)+' expected from '+s.program+
+            (s.caseNo ? ' (case '+s.caseNo+')' : '')+
+            ' · '+Math.abs(n)+' days late. Chase the agency, not the tenant — this is not the tenant’s debt.',
+            money0(s.govtShort),'rent');
+        else if (n <= 7)
+          push('info','Agency', uFull(u.id)+' — '+s.program+' payment expected',
+            money(s.govtShort)+' due around '+fmtShort(s.dueDate)+'.', money0(s.govtShort),'rent');
+      }
+    });
+  });
+
+  S.utilBills.forEach(b => {
+    if (b.paid_date || !b.due_date) return;
+    const n = days(b.due_date);
+    const where = b.unit_id ? uFull(b.unit_id) : bName(b.building_id);
+    const lab = String(b.utility_type||'utility').replace(/^./,c=>c.toUpperCase());
+    if (n < 0)
+      push('crit','Utility', where+' — '+lab+' bill overdue',
+        (b.provider?b.provider+' · ':'')+money(b.amount)+' was due '+fmtDate(b.due_date)+' ('+Math.abs(n)+' days ago). Late fees and liens accrue.', money0(b.amount),'utilities');
+    else if (n <= 14)
+      push('warn','Utility', where+' — '+lab+' bill due '+fmtShort(b.due_date),
+        (b.provider?b.provider+' · ':'')+money(b.amount)+' due in '+n+' day'+(n===1?'':'s')+'.', money0(b.amount),'utilities');
+  });
+
+  S.utilAccounts.forEach(a => {
+    if (!a.due_day) return;
+    const cycle = Number(a.cycle_months||1);
+    for (let k=0;k<=1;k++) {
+      const period = addMonths(CUR_PERIOD,k);
+      if (cycle > 1 && (((+period.split('-')[1]) - 1) % cycle !== 0)) continue;
+      const dueDate = periodDue(period, a.due_day);
+      const n = days(dueDate);
+      if (n < 0 || n > 10) continue;
+      if (S.utilBills.some(b => b.account_id === a.id && b.due_date && b.due_date.slice(0,7) === period)) continue;
+      push('info','Expected', bName(a.building_id)+' — '+a.utility_type+' bill expected by '+fmtShort(dueDate),
+        (a.provider||'Account')+(a.account_number?' #'+a.account_number:'')+' bills around the '+ord(a.due_day)+'. Nothing entered for '+fmtPeriod(period)+' yet.', 'in '+n+'d','utilities');
+    }
+  });
+
+  S.complaints.forEach(c => {
+    if (c.status === 'resolved') return;
+    const n = Math.abs(days(c.opened_date));
+    const official = ['hpd','dob','311'].indexOf(c.source) >= 0;
+    const where = c.unit_id ? uFull(c.unit_id) : bName(c.building_id);
+    if (official)
+      push(n>14?'crit':'warn','Violation', where+' — '+String(c.source).toUpperCase()+' complaint open '+n+' days',
+        (c.title||'Complaint')+'. Official complaints become violations if not certified as corrected.', n+'d','complaints');
+    else if (n >= 14)
+      push(n>30?'crit':'warn','Complaint', where+' — tenant complaint open '+n+' days',
+        (c.title||'Complaint')+'. No resolution recorded.', n+'d','complaints');
+    else if (n >= 3)
+      push('info','Complaint', where+' — '+(c.title||'complaint'),
+        'Opened '+fmtDate(c.opened_date)+'. Add an update so the record shows progress.', n+'d','complaints');
+  });
+
+  const yr = TODAY.getFullYear(), regDue = yr+'-07-31', nReg = days(regDue);
+  if (S.buildings.length && nReg >= -60 && nReg <= 75)
+    push(nReg<0?'crit':'warn','DHCR','Annual rent registration — due '+fmtDate(regDue),
+      nReg<0 ? 'The '+yr+' Annual Rent Registration (RR-2) deadline has passed. Unregistered units cannot take rent increases.'
+             : 'File the '+yr+' Annual Rent Registration for every stabilized unit with DHCR by July 31.',
+      nReg<0 ? Math.abs(nReg)+'d ago' : 'in '+nReg+'d', 'buildings');
+
+  const rank = {crit:0, warn:1, info:2};
+  return A.sort((a,b) => rank[a.sev]-rank[b.sev]);
+}
+
+/* ====================================================================
+   STAFF SHELL
+   ==================================================================== */
+const NAV = [
+  {k:'today',      l:'Today',      c:'Overview'},
+  {k:'buildings',  l:'Buildings',  c:'Portfolio'},
+  {k:'rent',       l:'Rent',       c:'Ledger'},
+  {k:'utilities',  l:'Utilities',  c:'Bills & accounts'},
+  {k:'complaints', l:'Complaints', c:'Issues & violations'},
+  {k:'documents',  l:'Documents',  c:'File room'},
+  {k:'people',     l:'People',     c:'Accounts & invites'},
+  {k:'settings',   l:'Settings',   c:'Website settings', ownerOnly:true}
+];
+
+function renderStaffShell() {
+  const root = $('#root');
+  if (!$('.app')) {
+    root.innerHTML = '';
+    root.appendChild(el('div',{class:'app'},[
+      el('aside',{class:'rail'},[
+        el('div',{class:'brand'},[
+          el('div',{class:'mark'},[CO]),
+          el('div',{class:'sub', text: S.buildings.length + ' buildings · Brooklyn'})
+        ]),
+        el('nav',{class:'navlist', id:'nav'}),
+        el('div',{class:'railfoot', id:'railfoot'})
+      ]),
+      el('main',{class:'main'},[
+        el('header',{class:'topbar'},[
+          el('div',{},[ el('span',{class:'crumb', id:'crumb'}), el('h1',{id:'ttl'}) ]),
+          el('div',{class:'spacer'}),
+          el('div',{id:'topact', style:'display:flex;gap:8px;flex-wrap:wrap'})
+        ]),
+        el('div',{class:'wrap', id:'view'})
+      ])
+    ]));
+  }
+  const nav = $('#nav'); nav.innerHTML='';
+  const alerts = buildAlerts();
+  const crit = alerts.filter(a=>a.sev==='crit').length;
+  const openC = S.complaints.filter(c=>c.status!=='resolved').length;
+  NAV.filter(it => !it.ownerOnly || isOwner()).forEach(it => {
+    const b = el('button',{class:'navbtn', onclick:()=>go(it.k)},[it.l]);
+    b.setAttribute('aria-current', S.route===it.k ? 'true':'false');
+    if (it.k==='today' && crit) b.appendChild(el('span',{class:'cnt', text:String(crit)}));
+    if (it.k==='complaints' && openC) b.appendChild(el('span',{class:'cnt', text:String(openC), style:'background:var(--ink-3)'}));
+    nav.appendChild(b);
+  });
+  const rf = $('#railfoot'); rf.innerHTML='';
+  rf.appendChild(el('div',{},[
+    el('span',{class:'who', text:(S.me.full_name || S.me.email || 'Signed in')}),
+    el('span',{text: S.me.role === 'owner' ? 'Owner' : 'Property manager'})
+  ]));
+  rf.appendChild(el('button',{class:'btn sm', text:'Sign out', onclick:signOut}));
+
+  const cur = NAV.find(n => n.k === S.route) || NAV[0];
+  $('#crumb').textContent = cur.c; $('#ttl').textContent = cur.l;
+  const act = $('#topact'); act.innerHTML='';
+  const view = $('#view'); view.innerHTML='';
+  ({ today:vToday, buildings:vBuildings, rent:vRent, utilities:vUtilities,
+     complaints:vComplaints, documents:vDocuments, people:vPeople,
+     settings:vSettings }[S.route] || vToday)(view, act, alerts);
+}
+
+function go(r){ S.route = r; window.scrollTo(0,0); render(); }
+async function signOut(){ await S.sb.auth.signOut(); location.reload(); }
+
+/* ---------------------------------------------------------- TODAY */
+function vToday(v, act, alerts) {
+  act.appendChild(el('button',{class:'btn', text:'Record rent', onclick:()=>go('rent')}));
+  act.appendChild(el('button',{class:'btn pri', text:'Log a complaint', onclick:()=>fComplaint()}));
+
+  let expected=0, collected=0, tenantOwed=0, agencyOwed=0;
+  S.units.forEach(u => {
+    const s = split(u.id, CUR_PERIOD); if (!s || !s.total) return;
+    expected   += s.total;
+    collected  += s.totalPaid;
+    tenantOwed += s.tenantShort;
+    agencyOwed += s.govtShort;
+  });
+  const occupied = S.units.filter(u => activeLease(u.id)).length;
+  const unpaidUtil = S.utilBills.filter(b=>!b.paid_date).reduce((s,b)=>s+Number(b.amount||0),0);
+  const crit = alerts.filter(a=>a.sev==='crit').length;
+
+  const kpi = (val,lab,note,cls) => {
+    const k = el('div',{class:'kpi'+(cls?' '+cls:'')});
+    k.appendChild(el('div',{class:'v', text:val}));
+    k.appendChild(el('div',{class:'l', text:lab}));
+    if (note) k.appendChild(el('div',{class:'n', text:note}));
+    return k;
+  };
+  const kp = el('div',{class:'kpis'});
+  kp.appendChild(kpi(money0(collected), fmtPeriod(CUR_PERIOD)+' collected',
+    expected ? money0(Math.max(expected-collected,0))+' still outstanding of '+money0(expected) : 'No rents entered yet',
+    (expected && collected>=expected) ? 'brand' : (expected ? 'warn' : '')));
+  kp.appendChild(kpi(money0(tenantOwed)+' / '+money0(agencyOwed),'Tenants / agencies owe',
+    (tenantOwed>0.5||agencyOwed>0.5) ? 'Chased separately — different people' : 'Everyone is settled',
+    (tenantOwed>0.5||agencyOwed>0.5) ? 'warn' : 'brand'));
+  kp.appendChild(kpi(String(crit),'Needs action today', crit?'Overdue rent, late filings or violations':'Nothing overdue', crit?'crit':'brand'));
+  kp.appendChild(kpi(occupied+'/'+S.units.length,'Units leased',
+    S.units.length ? (S.units.length-occupied)+' with no active lease' : 'Add your units to begin'));
+  kp.appendChild(kpi(money0(unpaidUtil),'Utility bills unpaid',
+    S.utilBills.filter(b=>!b.paid_date).length+' open bill(s)', unpaidUtil?'warn':'brand'));
+  v.appendChild(kp);
+
+  const stack = el('div',{class:'stack', style:'margin-top:16px'});
+
+  const steps = [
+    {d:S.units.length>0,        t:'Add your apartments and stores',   s:'Buildings → pick a building → Add unit.',                        g:'buildings'},
+    {d:S.leases.length>0,       t:'Enter one lease per occupied unit', s:'Tenant name, rent, start and end date. This drives every reminder.', g:'buildings'},
+    {d:S.utilAccounts.length>0, t:'Add your utility accounts',        s:'Con Edison, National Grid, NYC DEP — with the day each bills.',  g:'utilities'},
+    {d:S.rent.length>0,         t:'Record your first rent payment',   s:'Rent → find the unit → Record. Attach the check photo.',         g:'rent'},
+    {d:S.invites.length>0,      t:'Invite your first tenant',         s:'People → Create invite code, then hand the slip to the tenant.',  g:'people'}
+  ];
+  if (steps.some(s=>!s.d)) {
+    const p = el('div',{class:'panel'});
+    p.appendChild(el('div',{class:'panel-h'},[el('h2',{text:'Getting set up'}), el('div',{class:'spacer'}),
+      el('span',{class:'eyebrow', text: steps.filter(s=>s.d).length+' of '+steps.length+' done'})]));
+    steps.forEach(s => {
+      const row = el('div',{class:'chk'+(s.d?' done':'')});
+      row.appendChild(el('div',{class:'mk', text:s.d?'✓':''}));
+      row.appendChild(el('div',{class:'tx'},[ el('b',{text:s.t}), el('span',{text:s.s}) ]));
+      if (!s.d) row.appendChild(el('button',{class:'btn sm', text:'Go', onclick:()=>go(s.g)}));
+      p.appendChild(row);
+    });
+    stack.appendChild(p);
+  }
+
+  const p2 = el('div',{class:'panel'});
+  p2.appendChild(el('div',{class:'panel-h'},[el('h2',{text:'What needs you'}), el('div',{class:'spacer'}),
+    el('span',{class:'eyebrow', text: alerts.length+' item'+(alerts.length===1?'':'s')})]));
+  if (!alerts.length) {
+    p2.appendChild(el('div',{class:'empty'},[
+      el('strong',{text:'Nothing is overdue.'}),
+      'Once leases, rents and utility accounts are entered, deadlines appear here on their own.'
+    ]));
+  } else {
+    const list = el('div',{class:'alerts'});
+    alerts.slice(0,50).forEach(a => {
+      const row = el('div',{class:'alert '+a.sev});
+      const b = el('div',{class:'body'});
+      b.appendChild(el('div',{style:'display:flex;gap:8px;align-items:center;flex-wrap:wrap'},[
+        el('span',{class:'pill '+(a.sev==='crit'?'crit':a.sev==='warn'?'warn':'info'), text:a.type}),
+        el('span',{class:'t', text:a.t})
+      ]));
+      b.appendChild(el('div',{class:'d', text:a.d}));
+      row.appendChild(b);
+      if (a.when) row.appendChild(el('div',{class:'when', text:a.when}));
+      row.appendChild(el('button',{class:'btn sm', text:'Open', onclick:()=>go(a.go)}));
+      list.appendChild(row);
+    });
+    p2.appendChild(list);
+  }
+  stack.appendChild(p2);
+  v.appendChild(stack);
+}
+
+/* ------------------------------------------------------ BUILDINGS */
+/* What the tenant would be left to pay if nothing is typed in: the rent
+   less whatever the agency sends. Shown greyed out so it is clearly a
+   calculation and not something you entered. */
+function expectedTenantShare(u) {
+  const rent = Number(currentRent(u.id) || 0);
+  if (!rent) return null;
+  const prog = u.subsidy_program || null;
+  const ag = (prog && NO_CASH.indexOf(prog) >= 0) ? 0 : Number(u.subsidy_amount || 0);
+  return Math.max(rent - ag, 0);
+}
+
+/* A table cell you can click and type straight into. Saves on its own. */
+function inlineCell(u, key, kind, autoVal) {
+  const td = el('td', {class: kind === 'num' ? 'r' : ''});
+
+  function paint() {
+    td.innerHTML = '';
+    const raw = u[key];
+    /* For money, a zero and a blank mean the same thing here: nobody pays. */
+    const has = kind === 'num'
+      ? (raw != null && raw !== '' && Number(raw) !== 0)
+      : (raw != null && raw !== '');
+    let cls = 'icell', txt;
+    if (kind === 'num') {
+      cls += ' mono';
+      if (has)                         txt = money(raw);
+      else if (autoVal != null)      { txt = money(autoVal); cls += ' auto'; }
+      else                           { txt = '—';            cls += ' blank'; }
+    } else {
+      if (has)                         txt = String(raw);
+      else                           { txt = 'Add a note';   cls += ' blank'; }
+    }
+    const d = el('div',{class:cls, tabindex:'0', title:'Click to edit', text:txt});
+    d.addEventListener('click', edit);
+    d.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); edit(); }
+    });
+    td.appendChild(d);
+  }
+
+  function edit() {
+    td.innerHTML = '';
+    const inp = kind === 'num'
+      ? el('input',{class:'iedit mono', type:'number', step:'0.01', min:'0', inputmode:'decimal'})
+      : el('textarea',{class:'iedit ta', rows:'2',
+          placeholder:'Paying only $900 instead of $1,200'});
+    inp.value = (u[key] == null) ? '' : String(u[key]);
+    td.appendChild(inp);
+    inp.focus();
+    if (inp.select) inp.select();
+
+    let finished = false;
+    async function save() {
+      if (finished) return; finished = true;
+      const typed = String(inp.value).trim();
+      const next = typed === '' ? null : (kind === 'num' ? Number(typed) : typed);
+      const before = (u[key] == null || u[key] === '') ? null : u[key];
+      if (String(next) === String(before)) { paint(); return; }
+      if (kind === 'num' && next != null && !isFinite(next)) {
+        toast('That is not a number.', true); paint(); return;
+      }
+      td.innerHTML = '';
+      td.appendChild(el('div',{class:'icell blank', text:'Saving…'}));
+      const row = {}; row[key] = next;
+      const saved = await put('units', 'units', row, u.id);
+      if (saved) { toast('Saved'); render(); } else { paint(); }
+    }
+    inp.addEventListener('blur', save);
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { e.preventDefault(); finished = true; paint(); }
+      else if (e.key === 'Enter' && (kind === 'num' || e.metaKey || e.ctrlKey)) {
+        e.preventDefault(); inp.blur();
+      }
+    });
+  }
+
+  paint();
+  return td;
+}
+
+function vBuildings(v, act) {
+  act.appendChild(el('button',{class:'btn', text:'Add building', onclick:()=>fBuilding()}));
+  act.appendChild(el('button',{class:'btn pri', text:'Add unit', onclick:()=>fUnit()}));
+
+  if (!S.buildings.length) {
+    v.appendChild(el('div',{class:'panel'},[el('div',{class:'empty'},[el('strong',{text:'No buildings yet.'}),'Add your first building to begin.'])]));
+    return;
+  }
+  const f = el('div',{class:'filters'});
+  const sel = el('select',{id:'flt_b', onchange:e=>{S.filter.b = e.target.value; render();}});
+  sel.appendChild(el('option',{value:'', text:'All buildings'}));
+  S.buildings.forEach(b => sel.appendChild(el('option',{value:b.id, text:b.name})));
+  sel.value = S.filter.b || '';
+  f.appendChild(sel); v.appendChild(f);
+
+  const list = (S.filter.b ? S.buildings.filter(b=>b.id===S.filter.b) : S.buildings)
+    .slice().sort((a,b)=>a.name.localeCompare(b.name));
+  const stack = el('div',{class:'stack'});
+
+  list.forEach(b => {
+    const us = unitsOf(b.id);
+    const p = el('div',{class:'panel'});
+    const h = el('div',{class:'panel-h'});
+    h.appendChild(el('div',{},[
+      el('div',{class:'eyebrow', text:'Brooklyn, NY ' + (b.zip||'')}),
+      el('h2',{text:b.name})
+    ]));
+    h.appendChild(el('div',{class:'spacer'}));
+    h.appendChild(el('button',{class:'btn sm', text:'Edit', onclick:()=>fBuilding(b)}));
+    h.appendChild(el('button',{class:'btn sm', text:'+ Unit', onclick:()=>fUnit(null,b.id)}));
+    p.appendChild(h);
+
+    if (!us.length) {
+      p.appendChild(el('div',{class:'empty'},[el('strong',{text:'No units entered.'}),'Add each apartment and each store front.']));
+    } else {
+      const t = el('table',{class:'t'});
+      t.appendChild(el('thead',{},[el('tr',{html:
+        '<th>Unit</th><th>Type</th><th>Tenant</th><th class="r">Rent</th>'
+      + '<th>Lease ends</th><th class="r">Agency pays</th><th class="r">Tenant pays</th>'
+      + '<th>Concerns</th><th></th>'})]));
+      const tb = el('tbody');
+      us.forEach(u => {
+        const l = activeLease(u.id);
+        const covers = l && l.start_date <= TODAY_ISO && l.end_date >= TODAY_ISO;
+        const rent = currentRent(u.id);
+        const who  = currentTenant(u.id);
+        const vacant = !who;
+        const tr = el('tr');
+
+        const c1 = el('td',{},[ el('div',{style:'font-weight:600', text:u.label}) ]);
+        if (u.notes) c1.appendChild(el('div',{class:'sub', text:u.notes}));
+        else if (u.is_stabilized) c1.appendChild(el('div',{class:'sub', text:'Rent stabilized'}));
+        tr.appendChild(c1);
+
+        tr.appendChild(el('td',{class:'sub', text: u.unit_type==='commercial' ? 'Commercial' : 'Apartment'}));
+
+        const c3 = el('td');
+        if (vacant) c3.appendChild(el('span',{class:'pill mute', text:'Vacant'}));
+        else {
+          c3.appendChild(el('div',{text:who}));
+          if (u.subsidy_program) c3.appendChild(el('div',{class:'sub', text:u.subsidy_program}));
+        }
+        tr.appendChild(c3);
+
+        tr.appendChild(el('td',{class:'r mono', text: rent ? money(rent) : '—'}));
+
+        tr.appendChild(el('td',{class:'nowrap', style:'font-size:12.5px'},[
+          covers ? el('span',{class:'mono', text:fmtDate(l.end_date)})
+                 : el('span',{class:'sub', text: vacant ? '—' : 'not on file'}) ]));
+
+        tr.appendChild(inlineCell(u, 'subsidy_amount', 'num'));
+        tr.appendChild(inlineCell(u, 'tenant_pays',    'num',
+          vacant ? null : expectedTenantShare(u)));
+        tr.appendChild(inlineCell(u, 'concerns',       'text'));
+
+        tr.appendChild(el('td',{class:'r nowrap'},[
+          el('button',{class:'btn sm', text: l ? 'Lease' : 'Add lease', onclick:()=>fLease(l,u)}),
+          el('button',{class:'btn sm', text:'Edit', style:'margin-left:6px', onclick:()=>fUnit(u)})
+        ]));
+        tb.appendChild(tr);
+      });
+      t.appendChild(tb);
+      p.appendChild(el('div',{class:'tblwrap'},[t]));
+    }
+    stack.appendChild(p);
+  });
+  v.appendChild(stack);
+}
+
+function fBuilding(b) {
+  openForm({
+    title: b ? 'Edit building' : 'Add a building',
+    values: b || {},
+    fields: [
+      {k:'name', l:'Building name', t:'text', req:true, ph:'1403 Fulton Street', help:'Use the street address — that is how you recognise it.'},
+      {k:'address', l:'Full address', t:'text', ph:'1403 Fulton Street, Brooklyn, NY'},
+      {k:'zip', l:'ZIP code', t:'text', half:true, ph:'11216'},
+      {k:'block_lot', l:'Block / lot or BIN', t:'text', half:true},
+      {k:'dhcr_id', l:'DHCR registration number', t:'text', help:'Kept here so you never hunt for it at registration time.'},
+      {k:'notes', l:'Notes', t:'textarea', ph:'Boiler serviced by…, super’s phone…'}
+    ],
+    danger: b ? {label:'Delete building', fn:()=>del('buildings','buildings',b.id)} : null,
+    onSubmit: async v => { await put('buildings','buildings', {
+      name:v.name, address:v.address, zip:v.zip, block_lot:v.block_lot, dhcr_id:v.dhcr_id, notes:v.notes
+    }, b && b.id); toast('Building saved'); }
+  });
+}
+
+function fUnit(u, presetB) {
+  openForm({
+    title: u ? 'Edit unit' : 'Add a unit',
+    values: u || {building_id: presetB || '', unit_type:'apartment', is_stabilized:true},
+    note: 'A “unit” is one apartment or one store front. Enter every one, including vacant ones.',
+    fields: [
+      {k:'building_id', l:'Building', t:'select', opts:buildingOpts(), req:true},
+      {k:'label', l:'Unit number', t:'text', req:true, half:true, ph:'2R   ·   Store 1'},
+      {k:'unit_type', l:'Type', t:'select', half:true, opts:[{v:'apartment',l:'Apartment'},{v:'commercial',l:'Commercial / store'}]},
+      {k:'is_stabilized', l:'Rent stabilized', t:'checkbox', help:'Drives the renewal-window and DHCR reminders.'},
+      {k:'_c', l:'Who is there now', t:'hr'},
+      {k:'current_tenant_name', l:'Tenant name', t:'text', ph:'Leave blank if empty'},
+      {k:'current_rent', l:'Rent charged now', t:'number', half:true, ph:'0.00',
+        help:'Used until a lease is entered. A lease always overrides this.'},
+      {k:'rent_due_day', l:'Rent due on day', t:'number', half:true, ph:'1',
+        help:'Some tenancies run the 15th to the 14th.'},
+      {k:'subsidy_program', l:'Government programme', t:'select', ph:'None', opts:SUBSIDY_PROGRAMS},
+      {k:'subsidy_amount', l:'Agency pays each month', t:'number', half:true, ph:'0.00',
+        help:'The agency’s share. Leave at 0 if nobody pays on the tenant’s behalf.'},
+      {k:'tenant_pays', l:'Tenant pays each month', t:'number', half:true, ph:'0.00',
+        help:'Out of their own pocket. Leave blank and it is worked out as rent minus the agency share.'},
+      {k:'concerns', l:'Concerns, disputes, part payments', t:'textarea',
+        ph:'Paying only $900 instead of $1,200 · Due $30 · promised to clear by the 15th',
+        help:'Anything worth remembering about this tenancy. Shown on the Buildings table.'},
+      {k:'legal_rent', l:'Registered legal rent', t:'number', half:true, ph:'0.00',
+        help:'Optional. The DHCR figure, if it differs from what is charged.'},
+      {k:'notes', l:'Notes', t:'text'}
+    ],
+    danger: u ? {label:'Delete unit', fn:()=>del('units','units',u.id)} : null,
+    onSubmit: async v => { await put('units','units', {
+      building_id:v.building_id, label:v.label, unit_type:v.unit_type||'apartment',
+      is_stabilized:!!v.is_stabilized, legal_rent:v.legal_rent, notes:v.notes,
+      current_tenant_name: v.current_tenant_name, current_rent: v.current_rent,
+      rent_due_day: v.rent_due_day || 1,
+      subsidy_program: v.subsidy_program || null,
+      subsidy_amount: NO_CASH.indexOf(v.subsidy_program) >= 0 ? 0 : Number(v.subsidy_amount || 0),
+      tenant_pays: (v.tenant_pays === '' || v.tenant_pays == null) ? null : Number(v.tenant_pays),
+      concerns: v.concerns || null
+    }, u && u.id); toast('Unit saved'); }
+  });
+}
+
+function fLease(l, u) {
+  const unitId = u ? u.id : (l && l.unit_id);
+  const unit = byId('units', unitId) || {};
+  openForm({
+    title: (l ? 'Lease — ' : 'Add lease — ') + uFull(unitId),
+    values: Object.assign({rent_due_day:1, rider_signed:true}, l || {}),
+    fields: [
+      {k:'tenant_name', l:'Tenant name', t:'text', req:true, ph:'Full name on the lease'},
+      {k:'tenant_phone', l:'Phone', t:'text', half:true, ph:'(718) 555-0134'},
+      {k:'tenant_email', l:'Email', t:'text', half:true},
+      {k:'_x', l:'Lease terms', t:'hr'},
+      {k:'start_date', l:'Lease start', t:'date', req:true, half:true},
+      {k:'end_date', l:'Lease end', t:'date', req:true, half:true, help:'Reminders key off this date.'},
+      {k:'monthly_rent', l:'Monthly rent (total)', t:'number', req:true, half:true, ph:'0.00',
+        help:'The full legal rent, before any subsidy.'},
+      {k:'rent_due_day', l:'Rent due on day', t:'number', half:true, ph:'1', help:'Usually the 1st.'},
+      {k:'rider_signed', l:'Rent stabilization rider signed', t:'checkbox'},
+      {k:'preferential', l:'Preferential rent in effect', t:'checkbox'},
+      {k:'_s', l:'Government assistance', t:'hr'},
+      {k:'subsidy_program', l:'Programme', t:'select', ph:'None — tenant pays it all',
+        opts:SUBSIDY_PROGRAMS,
+        help:'SCRIE and DRIE freeze the rent and pay you through a tax credit — leave the amount at 0 for those.'},
+      {k:'subsidy_amount', l:'Agency pays each month', t:'number', half:true, ph:'0.00'},
+      {k:'subsidy_case_no', l:'Case / voucher number', t:'text', half:true, ph:'CF-88213'},
+      {k:'_y', l:'Paperwork', t:'hr'},
+      {k:'file', l:'Attach the signed lease', t:'file', help:'PDF or a photo. Files under this apartment.'},
+      {k:'share', l:'Let the tenant see this lease in their portal', t:'checkbox'},
+      {k:'notes', l:'Notes', t:'textarea', ph:'Preferential rent, SCRIE/DRIE, guarantor…'}
+    ],
+    danger: l ? {label:'Delete lease', fn:()=>del('leases','leases',l.id)} : null,
+    onSubmit: async (v, files) => {
+      await put('leases','leases', {
+        unit_id:unitId, tenant_name:v.tenant_name, tenant_phone:v.tenant_phone, tenant_email:v.tenant_email,
+        start_date:v.start_date, end_date:v.end_date, monthly_rent:v.monthly_rent,
+        rent_due_day: v.rent_due_day || 1, rider_signed: !!v.rider_signed,
+        preferential: !!v.preferential, notes:v.notes,
+        subsidy_program: v.subsidy_program || null,
+        subsidy_amount: paysCash(v.subsidy_program) ? Number(v.subsidy_amount || 0) : 0,
+        subsidy_case_no: v.subsidy_case_no || null
+      }, l && l.id);
+      if (files.file) await fileDocument(files.file, {
+        building_id: unit.building_id, unit_id: unitId, category:'Lease',
+        tenant_visible: !!v.share, note:'Lease '+(v.start_date||'')+' – '+(v.end_date||'')
+      });
+      toast('Lease saved');
+    }
+  });
+}
+
+/* ----------------------------------------------------------- RENT */
+function vRent(v, act) {
+  act.appendChild(el('button',{class:'btn', text:'Download this month (CSV)', onclick:exportRent}));
+
+  const f = el('div',{class:'filters'});
+  f.appendChild(el('button',{class:'btn sm', text:'‹ Previous', onclick:()=>{S.period=addMonths(S.period,-1); render();}}));
+  f.appendChild(el('div',{class:'ff', style:'font-weight:700;font-size:15px;min-width:150px;text-align:center', text:fmtPeriod(S.period)}));
+  f.appendChild(el('button',{class:'btn sm', text:'Next ›', onclick:()=>{S.period=addMonths(S.period,1); render();}}));
+  if (S.period !== CUR_PERIOD) f.appendChild(el('button',{class:'btn sm', text:'This month', onclick:()=>{S.period=CUR_PERIOD; render();}}));
+  v.appendChild(f);
+
+  const rows = [];
+  S.units.forEach(u => { const s = split(u.id, S.period); if (s) rows.push({u:u, s:s}); });
+  rows.sort((a,b)=>(bName(a.u.building_id)+a.u.label).localeCompare(bName(b.u.building_id)+b.u.label, undefined, {numeric:true}));
+
+  const sum = f => rows.reduce((t,x)=>t+f(x.s),0);
+  const due = sum(s=>s.total), govtDue = sum(s=>s.govtDue), tenDue = sum(s=>s.tenantDue);
+  const govtPaid = sum(s=>s.govtPaid), tenPaid = sum(s=>s.tenantPaid);
+  const tenShort = sum(s=>s.tenantShort), govtShort = sum(s=>s.govtShort);
+  const subsidised = rows.filter(x=>x.s.subsidised).length;
+
+  const kpi = (a,b,note,cls) => { const k=el('div',{class:'kpi'+(cls?' '+cls:'')});
+    k.appendChild(el('div',{class:'v',text:a})); k.appendChild(el('div',{class:'l',text:b}));
+    if (note) k.appendChild(el('div',{class:'n',text:note})); return k; };
+  const kp = el('div',{class:'kpis', style:'margin-bottom:16px'});
+  kp.appendChild(kpi(money0(due),'Rent roll',
+    subsidised ? subsidised+' of '+rows.length+' units subsidised' : null));
+  kp.appendChild(kpi(money0(govtPaid),'From agencies',
+    govtDue ? money0(govtDue)+' expected' : 'No subsidies this month',
+    govtShort>0.5 ? 'warn' : 'brand'));
+  kp.appendChild(kpi(money0(tenPaid),'From tenants', money0(tenDue)+' expected',
+    tenShort>0.5 ? 'warn' : 'brand'));
+  kp.appendChild(kpi(money0(tenShort),'Tenants owe', tenShort>0.5?'Chase the tenant':'All settled',
+    tenShort>0.5?'crit':'brand'));
+  kp.appendChild(kpi(money0(govtShort),'Agencies owe', govtShort>0.5?'Chase the agency':'All settled',
+    govtShort>0.5?'crit':'brand'));
+  v.appendChild(kp);
+
+  const p = el('div',{class:'panel'});
+  p.appendChild(el('div',{class:'panel-h'},[
+    el('h2',{text:'Rent ledger — '+fmtPeriod(S.period)}), el('div',{class:'spacer'}),
+    el('span',{class:'eyebrow', text:'Agency and tenant tracked separately'})]));
+  if (!rows.length) {
+    p.appendChild(el('div',{class:'empty'},[el('strong',{text:'No active leases for this month.'}),'Add leases under Buildings and this fills in by itself.']));
+  } else {
+    const t = el('table',{class:'t'});
+    t.appendChild(el('thead',{},[
+      el('tr',{html:'<th rowspan="2">Unit</th><th rowspan="2">Tenant</th>'
+        + '<th rowspan="2" class="r">Rent</th>'
+        + '<th colspan="2" class="grp">Government</th>'
+        + '<th colspan="2" class="grp">Tenant</th>'
+        + '<th rowspan="2" class="r">Owed</th><th rowspan="2">Status</th><th rowspan="2"></th>'}),
+      el('tr',{html:'<th class="r sml">Due</th><th class="r sml">Paid</th>'
+        + '<th class="r sml">Due</th><th class="r sml">Paid</th>'})
+    ]));
+    const tb = el('tbody');
+    rows.forEach(x => {
+      const s = x.s, n = days(s.dueDate);
+      const owed = s.tenantShort + s.govtShort;
+      let pill;
+      if (owed <= 0.5)               pill = el('span',{class:'pill settled', text:'Settled'});
+      else if (s.tenantShort > 0.5 && s.govtShort > 0.5)
+                                     pill = el('span',{class:'pill crit', text:'Both short'});
+      else if (s.govtShort > 0.5)    pill = el('span',{class:'pill '+(n<-2?'crit':'warn'), text:s.program+' late'});
+      else if (n < 0)                pill = el('span',{class:'pill crit', text:'Tenant '+Math.abs(n)+'d late'});
+      else                           pill = el('span',{class:'pill mute', text:'Due '+fmtShort(s.dueDate)});
+
+      const tr = el('tr');
+      tr.appendChild(el('td',{},[ el('div',{style:'font-weight:600',text:x.u.label}),
+                                  el('div',{class:'sub',text:bName(x.u.building_id)}) ]));
+      const c2 = el('td',{},[ el('div',{text:s.tenantName||'—'}) ]);
+      if (s.program) c2.appendChild(el('div',{class:'sub', text:s.program
+        + (paysCash(s.program) ? '' : ' · rent frozen, no payment')}));
+      tr.appendChild(c2);
+      tr.appendChild(el('td',{class:'r mono', text:money(s.total)}));
+
+      tr.appendChild(el('td',{class:'r mono gl', text: s.govtDue ? money(s.govtDue) : '—'}));
+      const gp = el('td',{class:'r mono'});
+      if (!s.govtDue) gp.appendChild(el('span',{class:'sub', text:'—'}));
+      else {
+        gp.appendChild(el('div',{class: s.govtShort>0.5 ? 'owe' : '', text: money(s.govtPaid)}));
+        if (s.row && s.row.govt_paid_date) gp.appendChild(el('div',{class:'sub', text:fmtShort(s.row.govt_paid_date)}));
+      }
+      tr.appendChild(gp);
+
+      tr.appendChild(el('td',{class:'r mono gl', text:money(s.tenantDue)}));
+      const tp = el('td',{class:'r mono'});
+      tp.appendChild(el('div',{class: s.tenantShort>0.5 ? 'owe' : '', text: s.row ? money(s.tenantPaid) : '—'}));
+      if (s.row && s.row.paid_date && s.tenantPaid > 0) tp.appendChild(el('div',{class:'sub', text:fmtShort(s.row.paid_date)}));
+      tr.appendChild(tp);
+
+      const ow = el('td',{class:'r mono'});
+      if (owed <= 0.5) ow.appendChild(el('span',{class:'sub', text:'—'}));
+      else {
+        ow.appendChild(el('div',{class:'owe', style:'font-weight:600', text:money(owed)}));
+        if (s.tenantShort>0.5 && s.govtShort>0.5)
+          ow.appendChild(el('div',{class:'sub', text:money0(s.tenantShort)+' T · '+money0(s.govtShort)+' G'}));
+      }
+      tr.appendChild(ow);
+      tr.appendChild(el('td',{},[pill]));
+      tr.appendChild(el('td',{class:'r'},[
+        el('button',{class:'btn sm pri', text:s.row?'Edit':'Record', onclick:()=>fPayment(x.u, s)}) ]));
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb);
+    p.appendChild(el('div',{class:'tblwrap'},[t]));
+  }
+  v.appendChild(p);
+  v.appendChild(chargePanel());
+}
+
+function fPayment(u, s) {
+  const l = s.lease, r = s.row;   // l may be null: rent can exist without a lease
+  const fields = [];
+
+  if (s.subsidised) {
+    fields.push({k:'_g', l:s.program + ' — the agency share', t:'hr'});
+    fields.push({k:'govt_paid', l:'Amount received from ' + s.program, t:'number', half:true, ph:'0.00',
+      help:'Expected: ' + money(s.govtDue)});
+    fields.push({k:'govt_paid_date', l:'Date the agency paid', t:'date', half:true});
+    fields.push({k:'govt_ref', l:'Agency reference', t:'text', half:true,
+      ph: s.caseNo ? ('case ' + s.caseNo) : 'ACH or voucher number'});
+    fields.push({k:'govtFile', l:'Agency remittance advice', t:'file'});
+    fields.push({k:'_t', l:'The tenant share', t:'hr'});
+  }
+
+  fields.push({k:'tenant_paid', l: s.subsidised ? 'Amount received from the tenant' : 'Amount received',
+    t:'number', req:true, half:true, ph:'0.00', help:'Expected: ' + money(s.tenantDue)});
+  fields.push({k:'paid_date', l:'Date the tenant paid', t:'date', half:true});
+  fields.push({k:'method', l:'Tenant paid by', t:'select', half:true,
+    opts:['Check','Money order','Cash','Zelle','Bank transfer','Other']});
+  fields.push({k:'reference', l:'Check / reference number', t:'text', half:true});
+  fields.push({k:'file', l:'Proof of the tenant’s payment', t:'file',
+    help:'Photo of the cheque, money order stub or bank screenshot.'});
+  fields.push({k:'note', l:'Note', t:'textarea', ph:'Balance promised by the 20th…'});
+
+  const noteLine = s.subsidised
+    ? fmtPeriod(S.period) + ' · ' + money(s.total) + ' total — ' + s.program + ' pays ' +
+      money(s.govtDue) + ', the tenant pays ' + money(s.tenantDue) + ' on the ' + ord(s.dueDay) + '.'
+    : fmtPeriod(S.period) + ' · ' + money(s.total) + ' due on the ' + ord(s.dueDay) + '.';
+
+  openForm({
+    title: 'Rent — ' + u.label + ', ' + bName(u.building_id),
+    values: Object.assign({
+      tenant_paid: s.tenantDue, govt_paid: s.govtDue, paid_date: TODAY_ISO, method: 'Check'
+    }, r || {}, r ? {tenant_paid: s.tenantPaid, govt_paid: s.govtPaid} : {}),
+    note: noteLine,
+    fields: fields,
+    danger: r ? {label:'Delete record', fn:()=>del('rent_payments','rent',r.id)} : null,
+    onSubmit: async (v, files) => {
+      let proof = r ? r.proof_path : null, govtProof = r ? r.govt_proof_path : null;
+      if (files.file) {
+        const d = await fileDocument(files.file, {building_id:u.building_id, unit_id:u.id,
+          category:'Rent proof', tenant_visible:true, note:fmtPeriod(S.period)+' tenant share'});
+        if (d) proof = d.storage_path;
+      }
+      if (files.govtFile) {
+        const d = await fileDocument(files.govtFile, {building_id:u.building_id, unit_id:u.id,
+          category:'Rent proof', tenant_visible:false, note:fmtPeriod(S.period)+' '+s.program+' remittance'});
+        if (d) govtProof = d.storage_path;
+      }
+      const tenantPaid = Number(v.tenant_paid || 0);
+      const govtPaid   = s.subsidised ? Number(v.govt_paid || 0) : 0;
+      await put('rent_payments','rent', {
+        unit_id:u.id, lease_id: s.leaseId, period:S.period,
+        amount_due: s.total,
+        govt_due: s.govtDue, tenant_due: s.tenantDue,
+        tenant_paid: tenantPaid, govt_paid: govtPaid,
+        amount_paid: tenantPaid + govtPaid,
+        paid_date: v.paid_date, method: v.method, reference: v.reference,
+        govt_program: s.program, govt_paid_date: v.govt_paid_date, govt_ref: v.govt_ref,
+        proof_path: proof, govt_proof_path: govtProof,
+        note: v.note, recorded_by: S.me.id
+      }, r && r.id);
+      toast('Payment recorded');
+    }
+  });
+}
+
+function exportRent() {
+  const rows = [['Building','Unit','Tenant','Period','Total rent','Programme','Case number',
+                 'Govt due','Govt paid','Govt paid on','Govt reference',
+                 'Tenant due','Tenant paid','Tenant paid on','Method','Reference',
+                 'Tenant owes','Agency owes','Status']];
+  S.units.forEach(u => {
+    const s = split(u.id, S.period); if (!s) return;
+    const r = s.row;
+    const owed = s.tenantShort + s.govtShort;
+    rows.push([bName(u.building_id), u.label, s.tenantName||'', S.period,
+      s.total.toFixed(2), s.program||'', s.caseNo||'',
+      s.govtDue.toFixed(2), s.govtPaid.toFixed(2), (r&&r.govt_paid_date)||'', (r&&r.govt_ref)||'',
+      s.tenantDue.toFixed(2), s.tenantPaid.toFixed(2), (r&&r.paid_date)||'',
+      (r&&r.method)||'', (r&&r.reference)||'',
+      s.tenantShort.toFixed(2), s.govtShort.toFixed(2),
+      owed<=0.5 ? 'Settled' : (s.tenantShort>0.5 && s.govtShort>0.5) ? 'Both short'
+        : s.govtShort>0.5 ? 'Agency owes' : 'Tenant owes']);
+  });
+  const csv = rows.map(r => r.map(c => /[",\n]/.test(String(c)) ? '"'+String(c).replace(/"/g,'""')+'"' : String(c)).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  const a = el('a',{href:URL.createObjectURL(blob), download:'rent-roll-'+S.period+'.csv'});
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+/* ------------------------------------------------------ UTILITIES */
+function vUtilities(v, act) {
+  const tab = S.tab.util || 'bills';
+  act.appendChild(el('button',{class:'btn', text:'Add account', onclick:()=>fUtilAccount()}));
+  act.appendChild(el('button',{class:'btn pri', text:'Add bill', onclick:()=>fUtilBill()}));
+
+  const tabs = el('div',{class:'tabs'});
+  [['bills','Bills'],['accounts','Accounts & billing dates'],['costs','Running costs']].forEach(([k,l]) => {
+    const b = el('button',{class:'tab', text:l, onclick:()=>{S.tab.util=k; render();}});
+    b.setAttribute('aria-selected', tab===k?'true':'false'); tabs.appendChild(b);
+  });
+  v.appendChild(tabs);
+
+  if (tab === 'costs') { viewCosts(v); return; }
+
+  if (tab === 'accounts') {
+    const p = el('div',{class:'panel'});
+    p.appendChild(el('div',{class:'panel-h'},[el('h2',{text:'Utility accounts'}), el('div',{class:'spacer'}),
+      el('span',{class:'eyebrow', text:'Billing day drives “bill expected” reminders'})]));
+    if (!S.utilAccounts.length) {
+      p.appendChild(el('div',{class:'empty'},[el('strong',{text:'No accounts yet.'}),
+        'Add one per building per utility, with the day of the month it normally bills. The site then tells you when a bill is expected but missing.']));
+    } else {
+      const t = el('table',{class:'t'});
+      t.appendChild(el('thead',{},[el('tr',{html:'<th>Building</th><th>Utility</th><th>Provider</th><th>Account #</th><th>Bills on</th><th>Cycle</th><th></th>'})]));
+      const tb = el('tbody');
+      S.utilAccounts.forEach(a => {
+        const tr = el('tr');
+        tr.appendChild(el('td',{style:'font-weight:600', text:bName(a.building_id)}));
+        tr.appendChild(el('td',{text:String(a.utility_type||'').replace(/^./,c=>c.toUpperCase())}));
+        tr.appendChild(el('td',{class:'sub', text:a.provider||'—'}));
+        tr.appendChild(el('td',{class:'mono', style:'font-size:12.5px', text:a.account_number||'—'}));
+        tr.appendChild(el('td',{class:'mono', text:a.due_day?('the '+ord(a.due_day)):'—'}));
+        tr.appendChild(el('td',{class:'sub', text:Number(a.cycle_months||1)===1?'Monthly':Number(a.cycle_months)+'-monthly'}));
+        tr.appendChild(el('td',{class:'r'},[el('button',{class:'btn sm', text:'Edit', onclick:()=>fUtilAccount(a)})]));
+        tb.appendChild(tr);
+      });
+      t.appendChild(tb);
+      p.appendChild(el('div',{class:'tblwrap'},[t]));
+    }
+    v.appendChild(p); return;
+  }
+
+  const bills = S.utilBills.slice().sort((a,b)=>String(b.due_date).localeCompare(String(a.due_date)));
+  const openAmt = bills.filter(b=>!b.paid_date).reduce((s,b)=>s+Number(b.amount||0),0);
+  const overdue = bills.filter(b=>!b.paid_date && days(b.due_date)<0);
+  const yr = String(TODAY.getFullYear());
+  const ytd = bills.filter(b=>b.paid_date && String(b.paid_date).slice(0,4)===yr).reduce((s,b)=>s+Number(b.amount||0),0);
+  const kpi = (a,b,cls)=>{const k=el('div',{class:'kpi'+(cls?' '+cls:'')});
+    k.appendChild(el('div',{class:'v',text:a})); k.appendChild(el('div',{class:'l',text:b})); return k;};
+  const kp = el('div',{class:'kpis', style:'margin-bottom:16px'});
+  kp.appendChild(kpi(money0(openAmt),'Unpaid', openAmt?'warn':'brand'));
+  kp.appendChild(kpi(String(overdue.length),'Past due', overdue.length?'crit':'brand'));
+  kp.appendChild(kpi(money0(ytd),'Paid in '+yr));
+  v.appendChild(kp);
+
+  const p = el('div',{class:'panel'});
+  p.appendChild(el('div',{class:'panel-h'},[el('h2',{text:'Utility bills'})]));
+  if (!bills.length) {
+    p.appendChild(el('div',{class:'empty'},[el('strong',{text:'No bills entered.'}),
+      'Add a bill whenever one arrives — amount, due date, and a photo of the bill.']));
+  } else {
+    const t = el('table',{class:'t'});
+    t.appendChild(el('thead',{},[el('tr',{html:'<th>Where</th><th>Utility</th><th>Period</th><th class="r">Amount</th><th>Due</th><th>Status</th><th>Files</th><th></th>'})]));
+    const tb = el('tbody');
+    bills.forEach(b => {
+      const n = days(b.due_date);
+      let pill;
+      if (b.paid_date) pill = el('span',{class:'pill settled', text:'Paid '+fmtShort(b.paid_date)});
+      else if (n<0)    pill = el('span',{class:'pill crit', text:Math.abs(n)+'d overdue'});
+      else if (n<=14)  pill = el('span',{class:'pill warn', text:'Due in '+n+'d'});
+      else             pill = el('span',{class:'pill mute', text:'Scheduled'});
+      const tr = el('tr');
+      const c1 = el('td',{},[el('div',{style:'font-weight:600', text:bName(b.building_id)})]);
+      if (b.unit_id) c1.appendChild(el('div',{class:'sub', text:uLabel(b.unit_id)}));
+      tr.appendChild(c1);
+      const c2 = el('td',{},[el('div',{text:String(b.utility_type||'').replace(/^./,c=>c.toUpperCase())})]);
+      if (b.provider) c2.appendChild(el('div',{class:'sub', text:b.provider}));
+      tr.appendChild(c2);
+      tr.appendChild(el('td',{class:'sub', text:b.period_label||'—'}));
+      tr.appendChild(el('td',{class:'r mono', text:money(b.amount)}));
+      tr.appendChild(el('td',{class:'mono', style:'font-size:12.5px', text:fmtDate(b.due_date)}));
+      tr.appendChild(el('td',{},[pill]));
+      const c7 = el('td');
+      if (b.bill_path)  c7.appendChild(fileBtn(b.bill_path,'Bill'));
+      if (b.proof_path) { if (b.bill_path) c7.appendChild(document.createTextNode(' · ')); c7.appendChild(fileBtn(b.proof_path,'Receipt')); }
+      if (!b.bill_path && !b.proof_path) c7.appendChild(el('span',{class:'sub', text:'—'}));
+      tr.appendChild(c7);
+      tr.appendChild(el('td',{class:'r'},[el('button',{class:'btn sm'+(b.paid_date?'':' pri'), text:b.paid_date?'Edit':'Mark paid', onclick:()=>fUtilBill(b)})]));
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb);
+    p.appendChild(el('div',{class:'tblwrap'},[t]));
+  }
+  v.appendChild(p);
+}
+
+const UTIL_OPTS = [{v:'water',l:'Water & sewer (NYC DEP)'},{v:'gas',l:'Gas'},{v:'electric',l:'Electric'},
+                   {v:'oil',l:'Heating oil'},{v:'other',l:'Other'}];
+
+/* ---------------------------------------------------------------------------
+   RUNNING COSTS — what each building costs to operate, against what it earns.
+   Straight off an income & expense sheet: operating costs, taxes, debt.
+   --------------------------------------------------------------------------- */
+const COST_KINDS = [{v:'operating',l:'Running cost'},{v:'tax',l:'Property tax'},{v:'debt',l:'Mortgage & interest'}];
+const KIND_LABEL = {operating:'Running costs', tax:'Property taxes', debt:'Mortgage & interest'};
+
+function rentRoll(buildingId) {
+  return unitsOf(buildingId).reduce((t,u) => t + currentRent(u.id), 0);
+}
+
+function viewCosts(v) {
+  const stack = el('div',{class:'stack'});
+
+  S.buildings.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(b => {
+    const rows = S.expenses.filter(e => e.building_id === b.id)
+      .sort((a,x)=>(a.sort_order||100)-(x.sort_order||100) || String(a.category).localeCompare(String(x.category)));
+    if (!rows.length && !unitsOf(b.id).length) return;
+
+    const income = rentRoll(b.id);
+    const byKind = k => rows.filter(e=>e.kind===k).reduce((t,e)=>t+Number(e.monthly_amount||0),0);
+    const operating = byKind('operating'), tax = byKind('tax'), debt = byKind('debt');
+    const allCosts = operating + tax + debt;
+    const net = income - allCosts;
+
+    const p = el('div',{class:'panel'});
+    const h = el('div',{class:'panel-h'});
+    h.appendChild(el('div',{},[
+      el('div',{class:'eyebrow', text:'Per month'}), el('h2',{text:b.name})
+    ]));
+    h.appendChild(el('div',{class:'spacer'}));
+    h.appendChild(el('button',{class:'btn sm', text:'Add a cost', onclick:()=>fExpense(null, b.id)}));
+    p.appendChild(h);
+
+    const kp = el('div',{class:'kpis', style:'padding:14px 16px'});
+    const tile = (val,lab,note,cls) => { const k=el('div',{class:'kpi'+(cls?' '+cls:'')});
+      k.appendChild(el('div',{class:'v',text:val})); k.appendChild(el('div',{class:'l',text:lab}));
+      if (note) k.appendChild(el('div',{class:'n',text:note})); return k; };
+    kp.appendChild(tile(money0(income),'Rent roll', money0(income*12)+' a year'));
+    kp.appendChild(tile(money0(operating),'Running costs', tax||debt ? 'Before tax and mortgage' : null, 'warn'));
+    kp.appendChild(tile(money0(allCosts),'All costs', 'Including tax and mortgage'));
+    kp.appendChild(tile(money0(net), net>=0 ? 'Left over' : 'Shortfall',
+      net>=0 ? money0(net*12)+' a year' : 'Costs exceed the rent roll', net>=0?'brand':'crit'));
+    p.appendChild(kp);
+
+    if (!rows.length) {
+      p.appendChild(el('div',{class:'empty'},[el('strong',{text:'No costs entered for this building.'}),
+        'Add insurance, water, maintenance, taxes and the mortgage to see what it really earns.']));
+    } else {
+      const t = el('table',{class:'t'});
+      t.appendChild(el('thead',{},[el('tr',{html:'<th>Cost</th><th class="r">Monthly</th><th class="r">A year</th><th>Note</th><th></th>'})]));
+      const tb = el('tbody');
+      ['operating','tax','debt'].forEach(kind => {
+        const group = rows.filter(e=>e.kind===kind);
+        if (!group.length) return;
+        const sub = group.reduce((t2,e)=>t2+Number(e.monthly_amount||0),0);
+        const suby = group.reduce((t2,e)=>t2+Number(e.annual_amount||0),0);
+        tb.appendChild(el('tr',{},[el('td',{colspan:'5', class:'grouprow'},[
+          el('span',{class:'eyebrow', text:KIND_LABEL[kind]})])]));
+        group.forEach(e => {
+          const tr = el('tr');
+          const c1 = el('td',{},[el('div',{style:'font-weight:600', text:e.category})]);
+          if (e.seasonal) c1.appendChild(el('div',{class:'sub', text:'Seasonal'}));
+          tr.appendChild(c1);
+          tr.appendChild(el('td',{class:'r mono', text: Number(e.monthly_amount) ? money(e.monthly_amount) : '—'}));
+          tr.appendChild(el('td',{class:'r mono', text: Number(e.annual_amount) ? money(e.annual_amount) : '—'}));
+          tr.appendChild(el('td',{class:'sub', text:e.note||''}));
+          tr.appendChild(el('td',{class:'r'},[el('button',{class:'btn sm', text:'Edit', onclick:()=>fExpense(e)})]));
+          tb.appendChild(tr);
+        });
+        tb.appendChild(el('tr',{class:'subtotal'},[
+          el('td',{text:KIND_LABEL[kind]+' total'}),
+          el('td',{class:'r mono', text:money(sub)}),
+          el('td',{class:'r mono', text:money(suby)}),
+          el('td'), el('td')
+        ]));
+      });
+      t.appendChild(tb);
+      p.appendChild(el('div',{class:'tblwrap'},[t]));
+    }
+    stack.appendChild(p);
+  });
+
+  if (!stack.children.length) {
+    stack.appendChild(el('div',{class:'panel'},[el('div',{class:'empty'},[
+      el('strong',{text:'Nothing to show yet.'}),'Add your buildings and their running costs first.'])]));
+  }
+  v.appendChild(stack);
+}
+
+function fExpense(e, presetB) {
+  openForm({
+    title: e ? 'Edit cost — ' + e.category : 'Add a running cost',
+    values: e || {building_id: presetB || '', kind:'operating', sort_order:100},
+    note: 'Put in what the building actually costs each month. Anything you enter here is for your eyes only — tenants never see it.',
+    fields: [
+      {k:'building_id', l:'Building', t:'select', opts:buildingOpts(), req:true},
+      {k:'category', l:'What is it', t:'text', req:true, ph:'Insurance · Water / sewer · Maintenance'},
+      {k:'kind', l:'Type', t:'select', half:true, opts:COST_KINDS,
+        help:'Running costs are counted separately from tax and mortgage.'},
+      {k:'seasonal', l:'Only some months', t:'checkbox', half:true},
+      {k:'monthly_amount', l:'Each month', t:'number', half:true, ph:'0.00'},
+      {k:'annual_amount', l:'A year', t:'number', half:true, ph:'0.00',
+        help:'Leave the monthly box at 0 if you only know the yearly figure.'},
+      {k:'note', l:'Note', t:'text', ph:'$300 in December, January and February only'}
+    ],
+    danger: e ? {label:'Delete cost', fn:()=>del('building_expenses','expenses',e.id)} : null,
+    onSubmit: async v => {
+      await put('building_expenses','expenses', {
+        building_id:v.building_id, category:v.category, kind:v.kind||'operating',
+        seasonal: !!v.seasonal, monthly_amount: Number(v.monthly_amount||0),
+        annual_amount: Number(v.annual_amount||0), note:v.note, sort_order: e ? e.sort_order : 100
+      }, e && e.id);
+      toast('Cost saved');
+    }
+  });
+}
+
+/* ---------------------------------------------------------------------------
+   CHARGES THAT ARE NOT MONTHLY RENT — a tax escalation, a late fee, legal costs.
+   --------------------------------------------------------------------------- */
+const CHARGE_TYPES = ['Tax escalation','Late fee','Legal costs','Repair recharge',
+                      'Water submeter','Insurance recharge','Other'];
+
+function chargePanel() {
+  const open = S.charges.filter(c => Number(c.amount_due||0) - Number(c.amount_paid||0) > 0.5);
+  const p = el('div',{class:'panel', style:'margin-top:16px'});
+  const h = el('div',{class:'panel-h'});
+  h.appendChild(el('h2',{text:'Charges other than rent'}));
+  h.appendChild(el('div',{class:'spacer'}));
+  if (open.length) h.appendChild(el('span',{class:'eyebrow',
+    text: money0(open.reduce((t,c)=>t+Number(c.amount_due||0)-Number(c.amount_paid||0),0)) + ' outstanding'}));
+  h.appendChild(el('button',{class:'btn sm', text:'Add a charge', onclick:()=>fCharge()}));
+  p.appendChild(h);
+
+  if (!S.charges.length) {
+    p.appendChild(el('div',{class:'empty'},[el('strong',{text:'Nothing here.'}),
+      'Tax escalations, late fees and legal costs live here, separate from monthly rent.']));
+    return p;
+  }
+  const byUnit = {};
+  S.charges.forEach(c => { const k = c.unit_id || c.building_id; (byUnit[k] = byUnit[k] || []).push(c); });
+
+  const t = el('table',{class:'t'});
+  t.appendChild(el('thead',{},[el('tr',{html:'<th>Who</th><th>Charge</th><th>Period</th><th class="r">Due</th><th class="r">Paid</th><th class="r">Owing</th><th></th>'})]));
+  const tb = el('tbody');
+  Object.keys(byUnit).forEach(k => {
+    const list = byUnit[k].sort((a,b)=>String(a.period_label).localeCompare(String(b.period_label)));
+    const owing = list.reduce((t2,c)=>t2+Number(c.amount_due||0)-Number(c.amount_paid||0),0);
+    const u = byId('units', k);
+    const lease = u ? activeLease(u.id) : null;
+    tb.appendChild(el('tr',{},[el('td',{colspan:'7', class:'grouprow'},[
+      el('span',{style:'font-weight:600', text: u ? uFull(u.id) : bName(k)}),
+      lease ? el('span',{class:'sub', text:'  ·  '+(lease.tenant_name||'')}) : null,
+      owing>0.5 ? el('span',{class:'pill crit', style:'margin-left:9px', text:money0(owing)+' owing'}) : null
+    ])]));
+    list.forEach(c => {
+      const bal = Number(c.amount_due||0) - Number(c.amount_paid||0);
+      const tr = el('tr');
+      tr.appendChild(el('td',{class:'sub', text:''}));
+      tr.appendChild(el('td',{},[ el('div',{text:c.charge_type}),
+        c.description ? el('div',{class:'sub', text:c.description}) : null ]));
+      tr.appendChild(el('td',{class:'mono', text:c.period_label||'—'}));
+      tr.appendChild(el('td',{class:'r mono', text:money(c.amount_due)}));
+      tr.appendChild(el('td',{class:'r mono', text: Number(c.amount_paid) ? money(c.amount_paid) : '—'}));
+      tr.appendChild(el('td',{class:'r mono'},[ bal>0.5
+        ? el('span',{class:'owe', style:'font-weight:600', text:money(bal)})
+        : el('span',{class:'pill settled', text:'Settled'}) ]));
+      tr.appendChild(el('td',{class:'r'},[el('button',{class:'btn sm', text:'Edit', onclick:()=>fCharge(c)})]));
+      tb.appendChild(tr);
+    });
+  });
+  t.appendChild(tb);
+  p.appendChild(el('div',{class:'tblwrap'},[t]));
+  return p;
+}
+
+function fCharge(c) {
+  openForm({
+    title: c ? 'Edit charge' : 'Add a charge',
+    values: c || {charge_type:'Tax escalation', amount_paid:0},
+    note: 'For money owed that is not the monthly rent — a share of a tax increase, a late fee, legal costs. The tenant can see charges made against their own unit.',
+    fields: [
+      {k:'building_id', l:'Building', t:'select', opts:buildingOpts(), req:true},
+      {k:'unit_id', l:'Unit', t:'select', opts:unitOptsAll(), ph:'Whole building'},
+      {k:'charge_type', l:'Type of charge', t:'select', req:true, opts:CHARGE_TYPES},
+      {k:'description', l:'What it is for', t:'text', ph:'5% contribution toward real estate taxes'},
+      {k:'period_label', l:'Period', t:'text', half:true, ph:'2026'},
+      {k:'due_date', l:'Due by', t:'date', half:true},
+      {k:'amount_due', l:'Amount charged', t:'number', req:true, half:true, ph:'0.00'},
+      {k:'amount_paid', l:'Amount received', t:'number', half:true, ph:'0.00'},
+      {k:'paid_date', l:'Date received', t:'date', half:true},
+      {k:'note', l:'Note', t:'textarea'}
+    ],
+    danger: c ? {label:'Delete charge', fn:()=>del('other_charges','charges',c.id)} : null,
+    onSubmit: async v => {
+      await put('other_charges','charges', {
+        building_id:v.building_id, unit_id:v.unit_id||null, charge_type:v.charge_type,
+        description:v.description, period_label:v.period_label, due_date:v.due_date,
+        amount_due:Number(v.amount_due||0), amount_paid:Number(v.amount_paid||0),
+        paid_date:v.paid_date, note:v.note
+      }, c && c.id);
+      toast('Charge saved');
+    }
+  });
+}
+
+function fUtilAccount(a) {
+  openForm({
+    title: a ? 'Edit utility account' : 'Add a utility account',
+    values: a || {cycle_months:1},
+    note: 'Tell it the day of the month this utility normally bills. It will warn you when a bill is expected but has not arrived — and when one is due.',
+    fields: [
+      {k:'building_id', l:'Building', t:'select', opts:buildingOpts(), req:true},
+      {k:'utility_type', l:'Utility', t:'select', half:true, req:true, opts:UTIL_OPTS},
+      {k:'provider', l:'Provider', t:'text', half:true, ph:'Con Edison · National Grid · NYC DEP'},
+      {k:'account_number', l:'Account number', t:'text'},
+      {k:'due_day', l:'Normally due on day', t:'number', half:true, ph:'15', help:'1 to 28.'},
+      {k:'cycle_months', l:'Bills every', t:'select', half:true, opts:[{v:1,l:'Month'},{v:3,l:'3 months (quarterly)'},{v:6,l:'6 months'}]},
+      {k:'notes', l:'Notes', t:'text'}
+    ],
+    danger: a ? {label:'Delete account', fn:()=>del('utility_accounts','utilAccounts',a.id)} : null,
+    onSubmit: async v => { await put('utility_accounts','utilAccounts', {
+      building_id:v.building_id, utility_type:v.utility_type, provider:v.provider,
+      account_number:v.account_number, due_day:v.due_day, cycle_months:Number(v.cycle_months||1), notes:v.notes
+    }, a && a.id); toast('Account saved'); }
+  });
+}
+
+function fUtilBill(b) {
+  openForm({
+    title: b ? 'Utility bill' : 'Add a utility bill',
+    values: b || {utility_type:'water'},
+    fields: [
+      {k:'building_id', l:'Building', t:'select', opts:buildingOpts(), req:true},
+      {k:'unit_id', l:'Specific unit', t:'select', opts:unitOptsAll(), ph:'Whole building (master meter)',
+        help:'Only a bill tied to a unit is visible to that tenant.'},
+      {k:'utility_type', l:'Utility', t:'select', half:true, req:true, opts:UTIL_OPTS},
+      {k:'provider', l:'Provider', t:'text', half:true, ph:'Con Edison'},
+      {k:'period_label', l:'Service period', t:'text', half:true, ph:'Aug 1 – Aug 31'},
+      {k:'amount', l:'Amount', t:'number', req:true, half:true, ph:'0.00'},
+      {k:'bill_date', l:'Bill date', t:'date', half:true},
+      {k:'due_date', l:'Due date', t:'date', req:true, half:true, help:'This is what the reminder counts down to.'},
+      {k:'billFile', l:'Photo / PDF of the bill', t:'file'},
+      {k:'_p', l:'When you pay it', t:'hr'},
+      {k:'paid_date', l:'Date paid', t:'date', half:true, help:'Leave blank until paid.'},
+      {k:'method', l:'Paid by', t:'select', half:true, ph:'—', opts:['Check','Bank transfer','Card','Autopay','Cash','Other']},
+      {k:'proofFile', l:'Proof of payment', t:'file'},
+      {k:'note', l:'Note', t:'textarea'}
+    ],
+    danger: b ? {label:'Delete bill', fn:()=>del('utility_bills','utilBills',b.id)} : null,
+    onSubmit: async (v, files) => {
+      let billPath = b ? b.bill_path : null, proofPath = b ? b.proof_path : null;
+      const meta = {building_id:v.building_id, unit_id:v.unit_id||null, tenant_visible: !!v.unit_id};
+      if (files.billFile)  { const d = await fileDocument(files.billFile,  Object.assign({category:'Utility bill', note:v.utility_type+' '+(v.period_label||'')}, meta)); if (d) billPath = d.storage_path; }
+      if (files.proofFile) { const d = await fileDocument(files.proofFile, Object.assign({category:'Utility payment proof', note:v.utility_type+' '+(v.period_label||'')}, meta)); if (d) proofPath = d.storage_path; }
+      const acct = S.utilAccounts.find(a => a.building_id === v.building_id && a.utility_type === v.utility_type);
+      await put('utility_bills','utilBills', {
+        building_id:v.building_id, unit_id:v.unit_id||null, account_id: acct ? acct.id : null,
+        utility_type:v.utility_type, provider:v.provider, period_label:v.period_label,
+        amount:v.amount, bill_date:v.bill_date, due_date:v.due_date, paid_date:v.paid_date,
+        method:v.method, bill_path:billPath, proof_path:proofPath, note:v.note
+      }, b && b.id);
+      toast('Bill saved');
+    }
+  });
+}
+
+/* ----------------------------------------------------- COMPLAINTS */
+const SRC = {tenant:'Tenant', hpd:'HPD', dob:'DOB', '311':'311', internal:'Internal'};
+const CATS = ['Heat / hot water','Leak / water damage','Mold','Pests','Electrical','Plumbing',
+              'Appliance','Elevator','Lock / security','Noise','Trash / sanitation','Structural','Other'];
+
+function vComplaints(v, act) {
+  act.appendChild(el('button',{class:'btn pri', text:'Log a complaint', onclick:()=>fComplaint()}));
+  const show = S.filter.cs || 'open';
+  const f = el('div',{class:'filters'});
+  const s1 = el('select',{id:'flt_cs', onchange:e=>{S.filter.cs=e.target.value; render();}});
+  [['open','Open & in progress'],['all','Everything'],['resolved','Resolved']].forEach(([k,l])=>s1.appendChild(el('option',{value:k,text:l})));
+  s1.value = show; f.appendChild(s1);
+  const s2 = el('select',{id:'flt_cb', onchange:e=>{S.filter.cb=e.target.value; render();}});
+  s2.appendChild(el('option',{value:'', text:'All buildings'}));
+  S.buildings.forEach(b=>s2.appendChild(el('option',{value:b.id, text:b.name})));
+  s2.value = S.filter.cb || ''; f.appendChild(s2);
+  v.appendChild(f);
+
+  let cs = S.complaints.slice();
+  if (show==='open') cs = cs.filter(c=>c.status!=='resolved');
+  if (show==='resolved') cs = cs.filter(c=>c.status==='resolved');
+  if (S.filter.cb) cs = cs.filter(c=>c.building_id===S.filter.cb);
+  cs.sort((a,b)=>String(b.opened_date).localeCompare(String(a.opened_date)));
+
+  const p = el('div',{class:'panel'});
+  p.appendChild(el('div',{class:'panel-h'},[el('h2',{text:'Complaints & violations'}), el('div',{class:'spacer'}),
+    el('span',{class:'eyebrow', text:cs.length+' shown'})]));
+  if (!cs.length) {
+    p.appendChild(el('div',{class:'empty'},[el('strong',{text:'Nothing here.'}),
+      'Log every call, text and HPD notice. Each one keeps a dated trail you can show a judge or an inspector.']));
+  } else {
+    cs.forEach(c => p.appendChild(complaintRow(c, true)));
+  }
+  v.appendChild(p);
+}
+
+function complaintRow(c, staff) {
+  const n = Math.abs(days(c.opened_date));
+  const row = el('div',{style:'padding:14px 16px;border-top:1px solid var(--line-2)'});
+  const head = el('div',{style:'display:flex;gap:9px;align-items:center;flex-wrap:wrap'});
+  head.appendChild(el('span',{class:'pill '+(['hpd','dob','311'].indexOf(c.source)>=0?'crit':'info'), text:SRC[c.source]||'Other'}));
+  head.appendChild(el('span',{class:'ff', style:'font-weight:700;font-size:14.5px', text:c.title||'Complaint'}));
+  head.appendChild(el('span',{class:'pill '+(c.status==='resolved'?'settled':c.status==='in_progress'?'warn':'mute'),
+    text:c.status==='resolved'?'Resolved':c.status==='in_progress'?'In progress':'Open'}));
+  head.appendChild(el('div',{style:'flex:1'}));
+  head.appendChild(el('button',{class:'btn sm', text:'Add update', onclick:()=>fUpdate(c)}));
+  if (staff) head.appendChild(el('button',{class:'btn sm', text:'Edit', onclick:()=>fComplaint(c)}));
+  row.appendChild(head);
+  row.appendChild(el('div',{class:'sub', style:'margin-top:4px',
+    text:(c.unit_id?uLabel(c.unit_id)+' · ':'')+bName(c.building_id)+' · opened '+fmtDate(c.opened_date)
+      + (c.status==='resolved'&&c.closed_date ? ' · closed '+fmtDate(c.closed_date) : ' · '+n+' day'+(n===1?'':'s')+' open')
+      + (c.case_number ? ' · case '+c.case_number : '')}));
+  if (c.description) row.appendChild(el('div',{style:'margin-top:7px;font-size:13.5px', text:c.description}));
+
+  const ups = S.cupdates.filter(u=>u.complaint_id===c.id)
+    .sort((a,b)=>String(b.update_date).localeCompare(String(a.update_date)));
+  if (ups.length) {
+    const ul = el('div',{style:'margin-top:10px;border-left:2px solid var(--line);padding-left:12px;display:flex;flex-direction:column;gap:8px'});
+    ups.forEach(u => {
+      const line = el('div',{style:'font-size:13px'});
+      line.appendChild(el('span',{class:'mono', style:'color:var(--ink-3);font-size:12px',
+        text:fmtDate(u.update_date)+(u.author_name?' · '+u.author_name:'')+' — '}));
+      line.appendChild(el('span',{text:u.note}));
+      if (u.file_path) { line.appendChild(document.createTextNode(' ')); line.appendChild(fileBtn(u.file_path,'photo')); }
+      ul.appendChild(line);
+    });
+    row.appendChild(ul);
+  }
+  return row;
+}
+
+function fComplaint(c) {
+  openForm({
+    title: c ? 'Edit complaint' : 'Log a complaint',
+    values: c || {opened_date:TODAY_ISO, status:'open', source:'tenant'},
+    note: c ? '' : 'Log it the moment it comes in — a dated record protects you in housing court and at HPD certification.',
+    fields: [
+      {k:'building_id', l:'Building', t:'select', opts:buildingOpts(), req:true},
+      {k:'unit_id', l:'Unit', t:'select', opts:unitOptsAll(), ph:'Whole building / common area'},
+      {k:'source', l:'Came from', t:'select', half:true, req:true,
+        opts:[{v:'tenant',l:'Tenant directly'},{v:'hpd',l:'HPD'},{v:'dob',l:'DOB'},{v:'311',l:'311'},{v:'internal',l:'Noticed by us'}]},
+      {k:'category', l:'Category', t:'select', half:true, ph:'—', opts:CATS},
+      {k:'title', l:'One-line summary', t:'text', req:true, ph:'No hot water in bathroom since Tuesday'},
+      {k:'description', l:'What happened', t:'textarea'},
+      {k:'opened_date', l:'Date received', t:'date', req:true, half:true},
+      {k:'status', l:'Status', t:'select', half:true, opts:[{v:'open',l:'Open'},{v:'in_progress',l:'In progress'},{v:'resolved',l:'Resolved'}]},
+      {k:'case_number', l:'HPD / DOB case number', t:'text', half:true},
+      {k:'closed_date', l:'Date resolved', t:'date', half:true},
+      {k:'file', l:'Attach a photo or notice', t:'file'}
+    ],
+    danger: c ? {label:'Delete complaint', fn:()=>del('complaints','complaints',c.id)} : null,
+    onSubmit: async (v, files) => {
+      const row = await put('complaints','complaints', {
+        building_id:v.building_id, unit_id:v.unit_id||null, source:v.source, category:v.category,
+        title:v.title, description:v.description, opened_date:v.opened_date, status:v.status,
+        case_number:v.case_number, closed_date: v.status==='resolved' ? (v.closed_date||TODAY_ISO) : null,
+        created_by: (c && c.created_by) || S.me.id
+      }, c && c.id);
+      if (row && files.file) await fileDocument(files.file, {
+        building_id:v.building_id, unit_id:v.unit_id||null, category:'Complaint',
+        tenant_visible: !!v.unit_id, note:v.title });
+      toast('Complaint saved');
+    }
+  });
+}
+
+function fUpdate(c) {
+  const asTenant = !isStaff();
+  openForm({
+    title: 'Add update — ' + (c.title || 'complaint'),
+    values: {update_date:TODAY_ISO, status:c.status},
+    note: 'Every update is stamped with its date, so the history reads as a timeline.',
+    fields: [
+      {k:'update_date', l:'Date', t:'date', req:true, half: !asTenant},
+      {k:'status', l:'Set status to', t:'select', half:true, staffOnly:true,
+        opts:[{v:'open',l:'Open'},{v:'in_progress',l:'In progress'},{v:'resolved',l:'Resolved'}]},
+      {k:'note', l:'What happened', t:'textarea', req:true,
+        ph: asTenant ? 'Still no hot water this morning.' : 'Plumber replaced the mixing valve; tenant confirmed hot water restored.'},
+      {k:'file', l:'Attach a photo', t:'file'}
+    ].filter(f => !(f.staffOnly && asTenant)),
+    onSubmit: async (v, files) => {
+      let path = null;
+      if (files.file) {
+        const d = await fileDocument(files.file, {
+          building_id:c.building_id, unit_id:c.unit_id, category:'Complaint',
+          asTenant, tenant_visible:true, note:String(v.note).slice(0,60) });
+        if (d) path = d.storage_path;
+      }
+      const ins = await S.sb.from('complaint_updates').insert({
+        complaint_id:c.id, update_date:v.update_date, note:v.note, file_path:path,
+        author_id:S.me.id, author_name:S.me.full_name || S.me.email
+      }).select().single();
+      if (ins.error) throw new Error(friendlyDbError(ins.error));
+      S.cupdates.push(ins.data);
+      if (!asTenant && v.status && v.status !== c.status) {
+        await put('complaints','complaints', {
+          status:v.status, closed_date: v.status==='resolved' ? (c.closed_date||v.update_date) : null
+        }, c.id);
+      }
+      toast('Update added');
+    }
+  });
+}
+
+/* ------------------------------------------------------ DOCUMENTS */
+const DOC_CATS = ['Lease','Rider','Rent proof','Utility bill','Utility payment proof','Complaint',
+                  'DHCR','Insurance','Registration','Other'];
+
+function vDocuments(v, act) {
+  act.appendChild(el('button',{class:'btn pri', text:'Upload a document', onclick:()=>fDocument()}));
+  const f = el('div',{class:'filters'});
+  const b = el('select',{id:'flt_db', onchange:e=>{S.filter.db=e.target.value; S.filter.du=''; render();}});
+  b.appendChild(el('option',{value:'', text:'All buildings'}));
+  S.buildings.forEach(x=>b.appendChild(el('option',{value:x.id, text:x.name})));
+  b.value = S.filter.db || ''; f.appendChild(b);
+  if (S.filter.db) {
+    const u = el('select',{id:'flt_du', onchange:e=>{S.filter.du=e.target.value; render();}});
+    u.appendChild(el('option',{value:'', text:'All units'}));
+    unitsOf(S.filter.db).forEach(x=>u.appendChild(el('option',{value:x.id, text:x.label})));
+    u.value = S.filter.du || ''; f.appendChild(u);
+  }
+  const c = el('select',{id:'flt_dc', onchange:e=>{S.filter.dc=e.target.value; render();}});
+  c.appendChild(el('option',{value:'', text:'All categories'}));
+  DOC_CATS.forEach(x=>c.appendChild(el('option',{value:x, text:x})));
+  c.value = S.filter.dc || ''; f.appendChild(c);
+  v.appendChild(f);
+
+  let docs = S.documents.slice();
+  if (S.filter.db) docs = docs.filter(d=>d.building_id===S.filter.db);
+  if (S.filter.du) docs = docs.filter(d=>d.unit_id===S.filter.du);
+  if (S.filter.dc) docs = docs.filter(d=>d.category===S.filter.dc);
+  docs.sort((a,b)=>String(b.uploaded_at).localeCompare(String(a.uploaded_at)));
+
+  const p = el('div',{class:'panel'});
+  p.appendChild(el('div',{class:'panel-h'},[el('h2',{text:'File room'}), el('div',{class:'spacer'}),
+    el('span',{class:'eyebrow', text:docs.length+' file'+(docs.length===1?'':'s')})]));
+  if (!docs.length) {
+    p.appendChild(el('div',{class:'empty'},[el('strong',{text:'No documents here yet.'}),
+      'Anything you attach anywhere on this site also lands here, filed under its apartment.']));
+  } else {
+    const t = el('table',{class:'t'});
+    t.appendChild(el('thead',{},[el('tr',{html:'<th>Document</th><th>Category</th><th>Filed under</th><th>Tenant can see</th><th>Added</th><th class="r">Size</th><th></th>'})]));
+    const tb = el('tbody');
+    docs.forEach(d => {
+      const tr = el('tr');
+      const c1 = el('td',{},[ el('button',{class:'doclink', style:'font-weight:600;font-size:13.5px',
+        type:'button', text:d.name||'Document', onclick:()=>openFile(d.storage_path)}) ]);
+      if (d.note) c1.appendChild(el('div',{class:'sub', text:d.note}));
+      tr.appendChild(c1);
+      tr.appendChild(el('td',{},[el('span',{class:'pill mute', text:d.category||'Other'})]));
+      tr.appendChild(el('td',{class:'sub', text:(d.unit_id?uLabel(d.unit_id)+' · ':'')+bName(d.building_id)}));
+      tr.appendChild(el('td',{},[ d.tenant_visible
+        ? el('span',{class:'pill brand', text:'Shared'})
+        : el('span',{class:'pill settled', text:'Private'}) ]));
+      tr.appendChild(el('td',{class:'mono', style:'font-size:12.5px', text:fmtDate(d.uploaded_at)}));
+      tr.appendChild(el('td',{class:'r mono', style:'font-size:12.5px',
+        text: d.size_bytes ? (d.size_bytes/1048576).toFixed(1)+' MB' : '—'}));
+      tr.appendChild(el('td',{class:'r'},[el('button',{class:'btn sm', text:'Edit', onclick:()=>fDocMeta(d)})]));
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb);
+    p.appendChild(el('div',{class:'tblwrap'},[t]));
+  }
+  v.appendChild(p);
+}
+
+function fDocument() {
+  openForm({
+    title:'Upload a document',
+    values:{},
+    note:'PDF or photo, up to 20 MB. Pick the building and unit so it files itself in the right place.',
+    fields:[
+      {k:'building_id', l:'Building', t:'select', opts:buildingOpts(), req:true},
+      {k:'unit_id', l:'Unit', t:'select', opts:unitOptsAll(), ph:'Whole building'},
+      {k:'category', l:'What is it', t:'select', req:true, opts:DOC_CATS},
+      {k:'note', l:'Short description', t:'text', ph:'2026 renewal lease, signed'},
+      {k:'tenant_visible', l:'Let this unit’s tenant see it in their portal', t:'checkbox',
+        help:'Only works when a unit is chosen above.'},
+      {k:'file', l:'Choose the file', t:'file', req:true}
+    ],
+    onSubmit: async (v, files) => {
+      if (!files.file) throw new Error('Pick a file first.');
+      const d = await fileDocument(files.file, {
+        building_id:v.building_id, unit_id:v.unit_id||null, category:v.category,
+        note:v.note, tenant_visible: !!(v.tenant_visible && v.unit_id) });
+      if (d) toast('Document filed');
+    }
+  });
+}
+
+function fDocMeta(d) {
+  openForm({
+    title:'Edit document details',
+    values:d,
+    note: d.tenant_visible ? '' : 'Note: a file saved privately stays private. To share it with the tenant, upload it again with the sharing box ticked.',
+    fields:[
+      {k:'name', l:'Name', t:'text', req:true},
+      {k:'building_id', l:'Building', t:'select', opts:buildingOpts(), req:true},
+      {k:'unit_id', l:'Unit', t:'select', opts:unitOptsAll(), ph:'Whole building'},
+      {k:'category', l:'Category', t:'select', opts:DOC_CATS},
+      {k:'note', l:'Description', t:'text'}
+    ],
+    danger:{label:'Delete document', fn: async()=>{
+      await S.sb.storage.from('docs').remove([d.storage_path]);
+      await del('documents','documents',d.id);
+    }},
+    onSubmit: async v => { await put('documents','documents', {
+      name:v.name, building_id:v.building_id, unit_id:v.unit_id||null, category:v.category, note:v.note
+    }, d.id); toast('Updated'); }
+  });
+}
+
+/* --------------------------------------------------------- PEOPLE */
+function vPeople(v, act) {
+  const tab = S.tab.people || 'invites';
+  act.appendChild(el('button',{class:'btn pri', text:'Create invite code', onclick:()=>fInvite()}));
+
+  const tabs = el('div',{class:'tabs'});
+  [['invites','Invite codes'],['accounts','Accounts']].forEach(([k,l])=>{
+    const b = el('button',{class:'tab', text:l, onclick:()=>{S.tab.people=k; render();}});
+    b.setAttribute('aria-selected', tab===k?'true':'false'); tabs.appendChild(b);
+  });
+  v.appendChild(tabs);
+
+  if (tab === 'invites') {
+    const p = el('div',{class:'panel'});
+    p.appendChild(el('div',{class:'panel-h'},[el('h2',{text:'Tenant invite codes'}), el('div',{class:'spacer'}),
+      el('span',{class:'eyebrow', text:'One code per apartment, used once'})]));
+    p.appendChild(el('div',{style:'padding:13px 16px;border-bottom:1px solid var(--line-2)'},[
+      el('div',{class:'note', text:'Print or write the code on a slip with the web address and hand it to the tenant. They use it once to create their own password. A used code cannot be reused.'})
+    ]));
+    if (!S.invites.length) {
+      p.appendChild(el('div',{class:'empty'},[el('strong',{text:'No codes yet.'}),'Create one for each apartment whose tenant you want online.']));
+    } else {
+      const t = el('table',{class:'t'});
+      t.appendChild(el('thead',{},[el('tr',{html:'<th>Code</th><th>Apartment</th><th>Status</th><th>Created</th><th></th>'})]));
+      const tb = el('tbody');
+      S.invites.slice().sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at))).forEach(iv=>{
+        const used = !!iv.used_by;
+        const tr = el('tr');
+        tr.appendChild(el('td',{class:'mono', style:'font-weight:600;font-size:14px', text:iv.code}));
+        tr.appendChild(el('td',{text: uFull(iv.unit_id)}));
+        tr.appendChild(el('td',{},[ used ? el('span',{class:'pill settled', text:'Used '+fmtShort(iv.used_at)})
+                                        : el('span',{class:'pill brand', text:'Ready to hand out'}) ]));
+        tr.appendChild(el('td',{class:'mono', style:'font-size:12.5px', text:fmtDate(iv.created_at)}));
+        const c5 = el('td',{class:'r'});
+        if (!used) c5.appendChild(el('button',{class:'btn sm', text:'Copy slip', onclick:()=>copySlip(iv)}));
+        if (isOwner()) c5.appendChild(el('button',{class:'btn sm danger', text:'Delete', style:'margin-left:6px',
+          onclick:async()=>{ if(confirm('Delete this code?')){ await del('unit_invites','invites', iv.code, 'code'); render(); } }}));
+        tr.appendChild(c5);
+        tb.appendChild(tr);
+      });
+      t.appendChild(tb);
+      p.appendChild(el('div',{class:'tblwrap'},[t]));
+    }
+    v.appendChild(p); return;
+  }
+
+  const p = el('div',{class:'panel'});
+  p.appendChild(el('div',{class:'panel-h'},[el('h2',{text:'Everyone with an account'})]));
+  const t = el('table',{class:'t'});
+  t.appendChild(el('thead',{},[el('tr',{html:'<th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Apartment</th><th></th>'})]));
+  const tb = el('tbody');
+  S.profiles.slice().sort((a,b)=>String(a.full_name||a.email).localeCompare(String(b.full_name||b.email))).forEach(pr=>{
+    const units = S.tenancies.filter(x=>x.profile_id===pr.id).map(x=>uFull(x.unit_id)).join(', ');
+    const tr = el('tr');
+    tr.appendChild(el('td',{style:'font-weight:600', text:pr.full_name||'—'}));
+    tr.appendChild(el('td',{class:'sub', text:pr.email||'—'}));
+    tr.appendChild(el('td',{class:'sub', text:pr.phone||'—'}));
+    tr.appendChild(el('td',{},[el('span',{class:'pill '+(pr.role==='owner'?'brand':pr.role==='manager'?'info':'mute'),
+      text: pr.role==='owner'?'Owner':pr.role==='manager'?'Manager':'Tenant'})]));
+    tr.appendChild(el('td',{class:'sub', text:units||'—'}));
+    const c6 = el('td',{class:'r'});
+    if (isOwner() && pr.id !== S.me.id) c6.appendChild(el('button',{class:'btn sm', text:'Change role', onclick:()=>fRole(pr)}));
+    tr.appendChild(c6);
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb);
+  p.appendChild(el('div',{class:'tblwrap'},[t]));
+  v.appendChild(p);
+}
+
+function makeCode(unitId) {
+  const u = byId('units', unitId) || {};
+  const b = byId('buildings', u.building_id) || {};
+  const word = String(b.name||'GL').replace(/[^A-Za-z]/g,'').slice(0,5).toUpperCase() || 'GL';
+  const lab  = String(u.label||'X').replace(/[^A-Za-z0-9]/g,'').toUpperCase();
+  const rnd  = Math.random().toString(36).replace(/[^a-z0-9]/g,'').slice(0,3).toUpperCase();
+  return word + '-' + lab + '-' + rnd;
+}
+
+function fInvite() {
+  openForm({
+    title:'Create a tenant invite code',
+    values:{},
+    note:'Pick the apartment. The code below is what you hand to that tenant — it works once.',
+    fields:[
+      {k:'unit_id', l:'Apartment', t:'select', opts:unitOptsAll(), req:true},
+      {k:'expires_at', l:'Expires on', t:'date', help:'Optional. Leave blank for no expiry.'}
+    ],
+    onSubmit: async v => {
+      const code = makeCode(v.unit_id);
+      const { data, error } = await S.sb.from('unit_invites').insert({
+        code, unit_id:v.unit_id, label:uFull(v.unit_id), expires_at:v.expires_at, created_by:S.me.id
+      }).select().single();
+      if (error) throw new Error(friendlyDbError(error));
+      S.invites.push(data);
+      setTimeout(() => copySlip(data), 60);   // after this modal closes
+    }
+  });
+}
+
+function copySlip(iv) {
+  const url = location.origin + location.pathname;
+  const text = CO + '\n\nYour apartment: ' + uFull(iv.unit_id)
+    + '\n\n1. Go to: ' + url
+    + '\n2. Tap "Resident", then "Set up your account with an invite code"'
+    + '\n3. Your invite code: ' + iv.code
+    + '\n4. Choose your own password.\n\nYou will be able to see your lease, your rent, and report repairs.';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(()=>toast('Slip copied — paste it into a text or a document to print.'),
+                                             ()=>showSlip(text));
+  } else showSlip(text);
+}
+function showSlip(text) {
+  openForm({ title:'Tenant slip', values:{slip:text}, submit:'Done',
+    fields:[{k:'slip', l:'Copy this and give it to the tenant', t:'textarea'}],
+    onSubmit: async()=>{} });
+}
+
+function fRole(pr) {
+  openForm({
+    title:'Change role — ' + (pr.full_name || pr.email),
+    values:{role:pr.role},
+    note:'Owner can do everything including deleting. Property manager can do everything except delete records. Tenant sees only their own apartment.',
+    fields:[{k:'role', l:'Role', t:'select', req:true,
+      opts:[{v:'owner',l:'Owner'},{v:'manager',l:'Property manager'},{v:'tenant',l:'Tenant'}]}],
+    onSubmit: async v => { await put('profiles','profiles', {role:v.role}, pr.id); toast('Role updated'); }
+  });
+}
+
+/* ====================================================================
+   TENANT PORTAL
+   ==================================================================== */
+const TNAV = [['home','My home'],['rent','Rent'],['bills','Utility bills'],['repairs','Repairs'],['docs','Documents']];
+
+function renderTenant() {
+  const root = $('#root'); root.innerHTML = '';
+  const unitId = myUnitIds()[0];
+  const unit   = byId('units', unitId) || {};
+  const bld    = byId('buildings', unit.building_id) || {};
+  const lease  = activeLease(unitId);
+  const route  = S.route && TNAV.some(t=>t[0]===S.route) ? S.route : 'home';
+
+  /* A subsidised tenant owes their share, never the agency's. Showing them the
+     full rent is the single biggest cause of panicked phone calls. */
+  let owed = 0, subsidised = false, program = null, govtShare = 0;
+  [addMonths(CUR_PERIOD,-1), CUR_PERIOD].forEach(p => {
+    const s = split(unitId, p); if (!s) return;
+    owed += s.tenantShort;
+    if (s.subsidised) { subsidised = true; program = s.program; govtShare = s.govtDue; }
+  });
+
+  const hero = el('div',{class:'tphero'});
+  hero.appendChild(el('div',{class:'co', text:CO}));
+  hero.appendChild(el('h1',{text: unit.label ? ('Apartment ' + unit.label) : 'Your home'}));
+  hero.appendChild(el('div',{class:'addr', text: bld.address || bld.name || ''}));
+  const bal = el('div',{class:'tpbal'});
+  bal.appendChild(el('div',{class:'amt', text: money0(owed)}));
+  bal.appendChild(el('div',{class:'lbl', text: owed > 0.5
+    ? (subsidised ? 'your share, owed as of today' : 'owed as of today')
+      + (lease ? ' · due on the ' + ord(lease.rent_due_day||1) + ' of each month' : '')
+    : 'You are all paid up. Thank you.'}));
+  if (subsidised) bal.appendChild(el('div',{class:'lbl', style:'flex-basis:100%;opacity:.85',
+    text: program + ' pays ' + money(govtShare) + ' of your rent directly to us. You are never asked for that part.'}));
+  hero.appendChild(bal);
+  root.appendChild(hero);
+
+  const nav = el('div',{class:'tpnav'});
+  TNAV.forEach(([k,l]) => {
+    const b = el('button',{text:l, onclick:()=>{S.route=k; window.scrollTo(0,0); render();}});
+    b.setAttribute('aria-current', route===k ? 'true':'false');
+    nav.appendChild(b);
+  });
+  root.appendChild(nav);
+
+  const tp = el('div',{class:'tp'});
+  ({home:tHome, rent:tRent, bills:tBills, repairs:tRepairs, docs:tDocs}[route])(tp, unitId, unit, lease);
+  tp.appendChild(el('div',{style:'margin-top:22px;text-align:center'},[
+    el('button',{class:'btn', text:'Sign out', onclick:signOut})
+  ]));
+  root.appendChild(tp);
+}
+
+function tHome(tp, unitId, unit, lease) {
+  const stack = el('div',{class:'stack'});
+
+  if (lease) {
+    const p = el('div',{class:'panel'});
+    p.appendChild(el('div',{class:'panel-h'},[el('h2',{text:'Your lease'})]));
+    const n = days(lease.end_date);
+    const rows = [
+      ['Monthly rent', money(lease.monthly_rent)],
+      ['Rent due', 'The ' + ord(lease.rent_due_day||1) + ' of each month'],
+      ['Lease started', fmtDate(lease.start_date)],
+      ['Lease ends', fmtDate(lease.end_date) + (n>=0 ? ' · ' + n + ' days from now' : ' · expired')],
+      ['Apartment', (unit.label||'—') + (unit.is_stabilized ? ' · rent stabilized' : '')]
+    ];
+    rows.forEach(([a,b]) => {
+      const r = el('div',{class:'tprow'});
+      r.appendChild(el('div',{class:'g'},[el('div',{class:'t', text:a})]));
+      r.appendChild(el('div',{class:'amt', text:b}));
+      p.appendChild(r);
+    });
+    if (n >= 0 && n <= RENEW_OPEN) {
+      p.appendChild(el('div',{style:'padding:13px 16px;border-top:1px solid var(--line-2)'},[
+        el('div',{class:'note', text:'Your lease ends in ' + n + ' days. Your landlord is required to offer you a renewal between 90 and 150 days before it ends. If you have not received one, contact the office.'})
+      ]));
+    }
+    stack.appendChild(p);
+  } else {
+    stack.appendChild(el('div',{class:'panel'},[el('div',{class:'empty'},[
+      el('strong',{text:'No lease on file yet.'}),'Your landlord has not entered your lease details. Contact the office.'])]));
+  }
+
+  const open = S.complaints.filter(c=>c.status!=='resolved');
+  const p2 = el('div',{class:'panel'});
+  p2.appendChild(el('div',{class:'panel-h'},[el('h2',{text:'Your open repair requests'}), el('div',{class:'spacer'}),
+    el('span',{class:'eyebrow', text:open.length+' open'})]));
+  if (!open.length) p2.appendChild(el('div',{class:'empty'},[el('strong',{text:'Nothing open.'}),'Everything you reported has been marked resolved.']));
+  else open.slice(0,4).forEach(c => {
+    const n = Math.abs(days(c.opened_date));
+    const r = el('div',{class:'tprow'});
+    r.appendChild(el('div',{class:'g'},[
+      el('div',{class:'t', text:c.title}),
+      el('div',{class:'d', text:'Reported '+fmtDate(c.opened_date)+' · '+n+' day'+(n===1?'':'s')+' ago'})
+    ]));
+    r.appendChild(el('span',{class:'pill '+(c.status==='in_progress'?'warn':'mute'),
+      text:c.status==='in_progress'?'In progress':'Open'}));
+    p2.appendChild(r);
+  });
+  stack.appendChild(p2);
+
+  if (CFG.EMERGENCY_PHONE || CFG.OFFICE_EMAIL) {
+    const p3 = el('div',{class:'panel'});
+    p3.appendChild(el('div',{class:'panel-h'},[el('h2',{text:'Contact'})]));
+    if (CFG.EMERGENCY_PHONE) p3.appendChild(el('div',{class:'tprow'},[
+      el('div',{class:'g'},[el('div',{class:'t', text:'Emergency (no heat, flood, no water)'}),
+        el('div',{class:'d', text:'Call — do not wait for the website'})]),
+      el('a',{class:'btn sm pri', href:'tel:'+String(CFG.EMERGENCY_PHONE).replace(/[^0-9+]/g,''), text:CFG.EMERGENCY_PHONE})]));
+    if (CFG.OFFICE_EMAIL) p3.appendChild(el('div',{class:'tprow'},[
+      el('div',{class:'g'},[el('div',{class:'t', text:'Office'})]),
+      el('a',{class:'doclink', href:'mailto:'+CFG.OFFICE_EMAIL, text:CFG.OFFICE_EMAIL})]));
+    stack.appendChild(p3);
+  }
+
+  tp.appendChild(stack);
+  tp.appendChild(el('div',{class:'tpcta'},[
+    el('button',{class:'btn pri big', text:'Report a repair', onclick:()=>tFileComplaint(unitId)})
+  ]));
+}
+
+function tRent(tp, unitId) {
+  const p = el('div',{class:'panel'});
+  p.appendChild(el('div',{class:'panel-h'},[el('h2',{text:'Your rent record'})]));
+  const periods = [];
+  for (let k=0;k>=-13;k--) periods.push(addMonths(CUR_PERIOD,k));
+  let any = false;
+  periods.forEach(per => {
+    const s = split(unitId, per); if (!s) return;
+    any = true;
+    const r = s.row;
+    const row = el('div',{class:'tprow'});
+    const g = el('div',{class:'g'});
+    g.appendChild(el('div',{class:'t', text:fmtPeriod(per)}));
+    g.appendChild(el('div',{class:'d', text: s.tenantShort <= 0.5
+      ? ('Your share paid in full' + (r&&r.paid_date ? ' on '+fmtDate(r.paid_date) : '') + (r&&r.method ? ' · '+r.method : ''))
+      : s.tenantPaid > 0
+        ? (money(s.tenantPaid)+' received of your '+money(s.tenantDue)+' — '+money(s.tenantShort)+' outstanding')
+        : ('Nothing recorded · your share is '+money(s.tenantDue))}));
+    if (s.subsidised) g.appendChild(el('div',{class:'d', style:'opacity:.85',
+      text: s.program + ': ' + money(s.govtDue) + (s.govtShort <= 0.5
+        ? ' received' + (r && r.govt_paid_date ? ' ' + fmtShort(r.govt_paid_date) : '')
+        : ' still expected — nothing for you to do')}));
+    row.appendChild(g);
+    if (r && r.proof_path) row.appendChild(fileBtn(r.proof_path,'Receipt'));
+    row.appendChild(el('span',{class:'pill '+(s.tenantShort<=0.5?'settled':s.tenantPaid>0?'warn':'crit'),
+      text: s.tenantShort<=0.5?'Paid':s.tenantPaid>0?'Partial':'Due'}));
+    p.appendChild(row);
+  });
+  if (!any) p.appendChild(el('div',{class:'empty'},[el('strong',{text:'Nothing recorded yet.'}),'Payments appear here as soon as your landlord records them.']));
+  tp.appendChild(p);
+  tp.appendChild(el('div',{class:'note', style:'margin-top:14px',
+    text:'Every amount here is your own share. Where a government programme pays part of your rent, that part is shown separately and is never something you are asked for. This is a record, not a way to pay — keep paying the way you do now, and tell the office if a month looks wrong.'}));
+}
+
+function tBills(tp, unitId) {
+  const bills = S.utilBills.filter(b=>b.unit_id===unitId)
+    .sort((a,b)=>String(b.due_date).localeCompare(String(a.due_date)));
+  const p = el('div',{class:'panel'});
+  p.appendChild(el('div',{class:'panel-h'},[el('h2',{text:'Utility bills for your apartment'})]));
+  if (!bills.length) {
+    p.appendChild(el('div',{class:'empty'},[el('strong',{text:'No bills here.'}),
+      'Only bills metered to your apartment appear here. Building-wide bills are not shown.']));
+  } else bills.forEach(b => {
+    const n = days(b.due_date);
+    const row = el('div',{class:'tprow'});
+    const g = el('div',{class:'g'});
+    g.appendChild(el('div',{class:'t', text:String(b.utility_type||'').replace(/^./,c=>c.toUpperCase())+(b.provider?' · '+b.provider:'')}));
+    g.appendChild(el('div',{class:'d', text:(b.period_label?b.period_label+' · ':'')+'Due '+fmtDate(b.due_date)}));
+    row.appendChild(g);
+    if (b.bill_path) row.appendChild(fileBtn(b.bill_path,'Bill'));
+    row.appendChild(el('div',{class:'amt', text:money(b.amount)}));
+    row.appendChild(el('span',{class:'pill '+(b.paid_date?'settled':n<0?'crit':'warn'),
+      text: b.paid_date?'Paid':n<0?'Overdue':'Due in '+n+'d'}));
+    p.appendChild(row);
+  });
+  tp.appendChild(p);
+}
+
+function tRepairs(tp, unitId) {
+  const cs = S.complaints.slice().sort((a,b)=>String(b.opened_date).localeCompare(String(a.opened_date)));
+  const p = el('div',{class:'panel'});
+  p.appendChild(el('div',{class:'panel-h'},[el('h2',{text:'Repairs you have reported'}), el('div',{class:'spacer'}),
+    el('span',{class:'eyebrow', text:cs.length+' total'})]));
+  if (!cs.length) {
+    p.appendChild(el('div',{class:'empty'},[el('strong',{text:'You have not reported anything.'}),
+      'Use the button below. Everything you report is dated and kept — including what your landlord does about it.']));
+  } else cs.forEach(c => p.appendChild(complaintRow(c, false)));
+  tp.appendChild(p);
+  tp.appendChild(el('div',{class:'tpcta'},[
+    el('button',{class:'btn pri big', text:'Report a repair', onclick:()=>tFileComplaint(unitId)})
+  ]));
+}
+
+function tFileComplaint(unitId) {
+  const unit = byId('units', unitId) || {};
+  openForm({
+    title:'Report a repair',
+    values:{opened_date:TODAY_ISO, category:'Heat / hot water'},
+    note:'Your landlord sees this straight away. It is dated and kept permanently, so you have a record.',
+    fields:[
+      {k:'category', l:'What is the problem', t:'select', req:true, opts:CATS},
+      {k:'title', l:'In one line', t:'text', req:true, ph:'No hot water in the bathroom since Tuesday'},
+      {k:'description', l:'Tell us more', t:'textarea', ph:'When it started, which room, anything you have already tried.'},
+      {k:'file', l:'Add a photo (optional)', t:'file', accept:'image/*'}
+    ],
+    onSubmit: async (v, files) => {
+      const ins = await S.sb.from('complaints').insert({
+        building_id: unit.building_id, unit_id: unitId, source:'tenant',
+        category:v.category, title:v.title, description:v.description,
+        opened_date:TODAY_ISO, status:'open', created_by:S.me.id
+      }).select().single();
+      if (ins.error) throw new Error(friendlyDbError(ins.error));
+      S.complaints.push(ins.data);
+      if (files.file) await fileDocument(files.file, {
+        building_id: unit.building_id, unit_id: unitId, category:'Complaint',
+        asTenant:true, note:v.title });
+      toast('Reported. Your landlord can see it now.');
+    }
+  });
+}
+
+function tDocs(tp, unitId) {
+  const docs = S.documents.filter(d=>d.unit_id===unitId)
+    .sort((a,b)=>String(b.uploaded_at).localeCompare(String(a.uploaded_at)));
+  const p = el('div',{class:'panel'});
+  p.appendChild(el('div',{class:'panel-h'},[el('h2',{text:'Your documents'})]));
+  if (!docs.length) {
+    p.appendChild(el('div',{class:'empty'},[el('strong',{text:'Nothing shared yet.'}),
+      'Your lease and receipts appear here when your landlord shares them.']));
+  } else docs.forEach(d => {
+    const row = el('div',{class:'tprow'});
+    row.appendChild(el('div',{class:'g'},[
+      el('div',{class:'t', text:d.name}),
+      el('div',{class:'d', text:(d.category||'Document')+' · added '+fmtDate(d.uploaded_at)})
+    ]));
+    row.appendChild(el('button',{class:'btn sm', text:'Open', onclick:()=>openFile(d.storage_path)}));
+    p.appendChild(row);
+  });
+  tp.appendChild(p);
+}
+
+/* -------------------------------------------------------- WEBSITE SETTINGS */
+const isPublished = () =>
+  !isPlaceholder(BAKED.SUPABASE_URL) && !isPlaceholder(BAKED.SUPABASE_ANON_KEY);
+
+function vSettings(v, act) {
+  const live = isPublished();
+  const mask = k => {
+    const s = String(k || '');
+    return s.length < 14 ? s : s.slice(0, 10) + '…' + s.slice(-6);
+  };
+
+  const p1 = el('div',{class:'panel'});
+  p1.appendChild(el('div',{class:'panel-h'},[el('h2',{text:'Who can open this website'})]));
+  const body = el('div',{style:'padding:16px 18px'});
+
+  if (live) {
+    body.appendChild(el('div',{class:'okbox',
+      text:'Published correctly. Anyone you send the link to — your manager, your tenants, '
+         + 'on any phone or computer — will land on the sign-in page.'}));
+  } else {
+    body.appendChild(el('div',{class:'errbox',
+      text:'Only this browser can open the website. Everyone else — including every tenant '
+         + 'you send an invite slip to — sees the first-time setup page instead of the sign-in page.'}));
+    body.appendChild(el('p',{class:'authnote', style:'margin-top:12px',
+      text:'The settings you typed are remembered on this computer only. They were never put '
+         + 'into the copy of the site that lives on the internet. The fix is below and takes a minute.'}));
+  }
+
+  const dl = el('div',{style:'margin-top:16px'});
+  dl.appendChild(el('button',{class:'btn pri big', style:'width:100%',
+    text:'Download the file to put on Netlify',
+    onclick:function(){ downloadConfigured(CFG, this); }}));
+  dl.appendChild(el('div',{class:'eyebrow', style:'margin-top:16px', text:'Then, in Netlify'}));
+  dl.appendChild(el('ol',{class:'howto'},[
+    el('li',{text:'Open app.netlify.com and click your site.'}),
+    el('li',{text:'Click the Deploys tab.'}),
+    el('li',{text:'Drag the downloaded index.html onto the drop area.'}),
+    el('li',{text:'Wait for “Published”, then open the site in a private window to check.'})
+  ]));
+  body.appendChild(dl);
+  p1.appendChild(body);
+  v.appendChild(p1);
+
+  const p2 = el('div',{class:'panel'});
+  p2.appendChild(el('div',{class:'panel-h'},[el('h2',{text:'Your details'}), el('div',{class:'spacer'}),
+    el('button',{class:'btn sm', text:'Change', onclick:()=>renderSetup(true)})]));
+  const rows = [
+    ['Company name',    CFG.COMPANY_NAME || '—'],
+    ['Emergency phone', CFG.EMERGENCY_PHONE || 'not set'],
+    ['Office email',    CFG.OFFICE_EMAIL || 'not set'],
+    ['Database address', CFG.SUPABASE_URL || '—'],
+    ['Public key',      mask(CFG.SUPABASE_ANON_KEY)]
+  ];
+  rows.forEach(([k, val]) => {
+    const r = el('div',{class:'tprow'});
+    r.appendChild(el('div',{class:'g'},[ el('div',{class:'t', text:k}) ]));
+    r.appendChild(el('div',{class:'sub mono', style:'text-align:right;word-break:break-all', text:String(val)}));
+    p2.appendChild(r);
+  });
+  p2.appendChild(el('div',{class:'empty', style:'text-align:left'},[
+    'The public key is meant to be public — it is in the page everyone downloads. ',
+    el('b',{text:'The key marked “secret” or “service_role” must never go here, or anywhere else.'})
+  ]));
+  v.appendChild(p2);
+}
+
+/* ====================================================================
+   ROUTER
+   ==================================================================== */
+function render() {
+  if (S.loading) { $('#root').innerHTML = '<div class="loading">Loading your records…</div>'; return; }
+  if (!S.session) { renderAuth(); return; }
+  if (isStaff()) { renderStaffShell(); return; }
+  if (!myUnitIds().length) {
+    if (isStaffDoor()) { renderNoStaffAccess(); return; }
+    renderClaim(); return;
+  }
+  renderTenant();
+}
+
+async function start() {
+  const problem = configProblem();
+  if (problem === 'NEEDS_SETUP') { renderSetup(); return; }
+  if (problem) { showSetupError(problem); return; }
+
+  S.sb = window.supabase.createClient(CFG.SUPABASE_URL.replace(/\/$/,''), CFG.SUPABASE_ANON_KEY, {
+    auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true }
+  });
+
+  const { data:{ session } } = await S.sb.auth.getSession();
+  S.session = session;
+
+  S.sb.auth.onAuthStateChange((evt, sess) => {
+    const had = !!S.session;
+    S.session = sess;
+    if (evt === 'SIGNED_OUT') { location.reload(); return; }
+    if (!had && sess) location.reload();
+  });
+
+  if (!S.session) { S.loading = false; render(); return; }
+
+  try {
+    await loadMe();
+    await loadAll();
+  } catch (e) {
+    console.error(e);
+    S.loading = false;
+    toast('Could not load your records. Check your internet and refresh.', true);
+  }
+  S.loading = false;
+  render();
+}
+
+start();
+})();
+</script>
+</body>
+</html>
